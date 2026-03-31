@@ -465,12 +465,8 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
     <h1 class="app-h1">Dein Profil<span class="fire-line">kriegt die Wahrheit.</span></h1>
     <p class="app-sub">Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.</p>
 
-    <!-- API Key Input – nur für lokalen Test, wird auf Vercel nicht gebraucht -->
-    <div id="key-section" style="background:var(--card);border:1px solid rgba(255,184,0,0.25);padding:16px 20px;margin-bottom:20px;border-radius:0;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">🔑 Kimi API Key (nur zum lokalen Testen)</div>
-      <input type="password" id="api-key-inp" placeholder="sk-... deinen Moonshot API Key hier eingeben" style="width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;outline:none;">
-      <p style="font-size:12px;color:var(--smoke);margin-top:8px;">Auf Vercel deployed? Kein Key nötig – läuft über sicheres Backend.</p>
-    </div>
+    <!-- API Key Input – versteckt, nur intern genutzt -->
+    <input type="hidden" id="api-key-inp" value="">
 
     <div id="err-box" class="err-box"></div>
 
@@ -685,53 +681,76 @@ function resetApp() {
   showScreen('ascreen-upload');
 }
 
-// ── CALL AI – Backend auf Vercel, Kimi direkt nur lokal ──
+// ── CALL AI – Backend auf Vercel, direkt via Kimi in Vorschau ──
 async function callAI(isFull) {
-  const keyInp = document.getElementById('api-key-inp');
-  if (keyInp?.value.trim()) window._kimiKey = keyInp.value.trim();
-
   const bio = document.getElementById('bio-inp').value.trim();
   const bioTxt = bio ? `\n\nBio:\n"${bio}"` : '\n\n(Kein Bio-Text)';
   const prompt = isFull
     ? `Plattform: ${platform}${bioTxt}\n\nVollständige Analyse als JSON (kein Markdown):\n{"score":<1.0-10.0>,"headline":"<witzig>","roast_items":[{"emoji":"","category":"","severity":"<hoch|mittel|niedrig>","text":"<2-4 Sätze>"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":""},{"label":"Direkt & interessant","text":""},{"label":"Geheimnisvoll","text":""}]}\n8-12 items. Deutsch.`
     : `Plattform: ${platform}${bioTxt}\n\nMini-Roast als JSON (kein Markdown):\n{"score":<1.0-10.0>,"headline":"<witzig max 8 Wörter>","roast_items":[{"emoji":"","category":"","severity":"<hoch|mittel|niedrig>","text":"<2-3 Sätze>"}]}\nExakt 3 items. Deutsch.`;
 
+  // Bilder komprimieren (max 800px, JPEG 70%)
+  async function compressImg(dataUrl) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const max = 800;
+        let w = img.width, h = img.height;
+        if (w > max) { h = h * max / w; w = max; }
+        if (h > max) { w = w * max / h; h = max; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = dataUrl;
+    });
+  }
+
+  const compressedImgs = await Promise.all(imgs.slice(0,2).map(compressImg));
+
   // Auf Vercel → sicheres Backend
-  const isVercel = window.location.hostname !== 'localhost' && !window.location.href.includes('claude.ai') && !window.location.protocol.startsWith('blob');
+  const isVercel = window.location.hostname.includes('roastmyprofile.app') ||
+                   window.location.hostname.includes('vercel.app');
+
   if (isVercel) {
     const payload = {
       platform, bio,
-      images: imgs.slice(0,3).map(img => img.replace(/^data:image\/[^;]+;base64,/,'')),
-      imageMimeTypes: imgs.slice(0,3).map(img => { const m = img.match(/^data:(image\/[^;]+);/); return m?m[1]:'image/jpeg'; }),
+      images: compressedImgs.map(img => img.replace(/^data:image\/[^;]+;base64,/,'')),
+      imageMimeTypes: compressedImgs.map(() => 'image/jpeg'),
       isFull
     };
-    const res = await fetch('/api/roast', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error||`Fehler ${res.status}`); }
+    const res = await fetch('/api/roast', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(()=>({}));
+      throw new Error(e.error || `Server Fehler ${res.status}`);
+    }
     return res.json();
   }
 
-  // Lokaler Test → direkt zur Kimi API
-  if (!window._kimiKey) throw new Error('Bitte deinen Moonshot API Key oben eingeben um lokal zu testen.');
-
+  // Vorschau / lokaler Test → direkt zur Kimi API
   const content = [];
-  imgs.slice(0,3).forEach(img => content.push({ type:'image_url', image_url:{ url: img } }));
+  compressedImgs.forEach(img => content.push({ type:'image_url', image_url:{ url: img } }));
   content.push({ type:'text', text: prompt });
 
-  const resp = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
-    headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${window._kimiKey}` },
+    headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
-      model:'kimi-k2.5', max_tokens: isFull?3000:1000, temperature:0.7,
-      messages:[
-        { role:'system', content:`Du bist ein brutell ehrlicher witziger Dating-Profil-Coach für ${platform}. Antworte NUR mit JSON ohne Markdown.` },
-        { role:'user', content }
-      ]
+      model:'claude-sonnet-4-20250514',
+      max_tokens: isFull ? 3000 : 1000,
+      system:`Du bist ein brutell ehrlicher witziger Dating-Profil-Coach für ${platform}. Antworte NUR mit validem JSON ohne Markdown.`,
+      messages:[{ role:'user', content }]
     })
   });
 
-  if (!resp.ok) throw new Error(`Kimi API Fehler ${resp.status} – Key korrekt eingegeben?`);
+  if (!resp.ok) throw new Error(`API Fehler ${resp.status}`);
   const d = await resp.json();
-  const raw = (d.choices?.[0]?.message?.content||'').replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  const raw = (d.content?.map(b=>b.text||'').join('')||'').replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
   try { return JSON.parse(raw); }
   catch { const m2 = raw.match(/\{[\s\S]*\}/); if (m2) return JSON.parse(m2[0]); throw new Error('Antwort nicht lesbar.'); }
 }
