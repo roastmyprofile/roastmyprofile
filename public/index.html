@@ -3,15 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoastMyProfile 🔥 – Ehrliches KI-Feedback für dein Dating-Profil</title>
-<meta name="description" content="Lass dein Dating-Profil von einer KI roasten. Ehrliches Feedback, optimierte Bio, mehr Matches. Ab sofort kostenlos testen.">
-
-<!-- Plausible Analytics – PLATZHALTER: ersetze 'roastmyprofile.de' mit deiner Domain -->
-<script defer data-domain="roastmyprofile.de" src="https://plausible.io/js/script.js"></script>
-
-<!-- Stripe.js -->
-<script src="https://js.stripe.com/v3/"></script>
-
+<title>RoastMyProfile 🔥</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -22,7 +14,6 @@
     --char: #1A1208;
     --smoke: #8C7B6E;
     --gold: #FFB800;
-    --green: #00C853;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,732 +24,846 @@
     font-family: 'Instrument Sans', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    cursor: default;
   }
 
+  /* Animated background */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background:
+    background: 
       radial-gradient(ellipse 60% 40% at 20% 80%, rgba(255,77,0,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 60% at 80% 20%, rgba(255,184,0,0.06) 0%, transparent 70%);
+      radial-gradient(ellipse 40% 60% at 80% 20%, rgba(255,184,0,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 80% at 50% 100%, rgba(255,77,0,0.08) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
   }
 
-  .container { position: relative; z-index: 2; max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  /* NOISE TEXTURE */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+  }
 
+  .container { position: relative; z-index: 2; }
+
+  /* NAV */
   nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 0;
+    padding: 24px 40px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
   }
 
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; }
-  .logo span { color: var(--fire); }
-  .nav-badge { font-size: 12px; color: var(--smoke); border: 1px solid rgba(255,255,255,0.08); padding: 6px 14px; }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--cream);
+  }
 
-  .screen { display: none; padding: 48px 0; }
-  .screen.active { display: block; animation: fadeUp 0.5s ease both; }
+  .logo span { color: var(--fire); }
+
+  .nav-cta {
+    background: var(--fire);
+    color: var(--cream);
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .nav-cta:hover { background: var(--fire-soft); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    padding: 80px 40px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fire);
+    margin-bottom: 24px;
+    border: 1px solid rgba(255,77,0,0.3);
+    padding: 6px 14px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 8vw, 100px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 .fire-text {
+    color: var(--fire);
+    display: block;
+  }
+
+  .hero p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255,245,236,0.7);
+    margin-bottom: 40px;
+    max-width: 460px;
+  }
+
+  .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--fire);
+    color: var(--cream);
+    border: none;
+    padding: 16px 36px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    transition: all 0.2s;
+    animation: pulse-fire 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-fire {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,0,0); }
+    50% { box-shadow: 0 0 30px 8px rgba(255,77,0,0.25); }
+  }
+
+  .btn-primary:hover { background: var(--fire-soft); transform: translateY(-2px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 16px 36px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover { border-color: var(--fire); color: var(--fire); }
+
+  .trust-badge {
+    font-size: 13px;
+    color: var(--smoke);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* HERO CARD */
+  .hero-card {
+    background: var(--char);
+    border: 1px solid rgba(255,77,0,0.15);
+    padding: 32px;
+    position: relative;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--fire), var(--gold), transparent);
+  }
+
+  .card-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--fire);
+    margin-bottom: 16px;
+  }
+
+  .profile-preview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF4D00, #FFB800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .profile-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .profile-info p { font-size: 13px; color: var(--smoke); line-height: 1.4; }
+
+  .roast-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .roast-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .roast-text { color: rgba(255,245,236,0.8); }
+  .roast-text strong { color: var(--cream); }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--fire);
+    line-height: 1;
+  }
+
+  .score-label { font-size: 12px; color: var(--smoke); margin-top: 4px; }
+
+  .blur-overlay {
+    position: relative;
+  }
+
+  .blurred {
+    filter: blur(5px);
+    opacity: 0.4;
+    user-select: none;
+  }
+
+  .unlock-badge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .unlock-btn {
+    background: var(--fire);
+    color: var(--cream);
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  }
+
+  .unlock-price { font-size: 12px; color: var(--smoke); }
+
+  /* STEPS */
+  .steps-section {
+    padding: 80px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--fire);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: 1px;
+    margin-bottom: 60px;
+    max-width: 500px;
+    line-height: 1;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .step {
+    background: var(--char);
+    padding: 40px 32px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: border-color 0.3s;
+  }
+
+  .step:hover { border-color: rgba(255,77,0,0.2); }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: rgba(255,77,0,0.12);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .step-icon { font-size: 32px; margin-bottom: 16px; display: block; }
+
+  .step h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .step p { font-size: 14px; color: var(--smoke); line-height: 1.6; }
+
+  /* UPLOAD SECTION */
+  .upload-section {
+    padding: 80px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .upload-area {
+    background: var(--char);
+    border: 2px dashed rgba(255,77,0,0.25);
+    padding: 60px 40px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-area:hover {
+    border-color: var(--fire);
+    background: rgba(255,77,0,0.03);
+  }
+
+  .upload-area::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(255,77,0,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .upload-area:hover::before { opacity: 1; }
+
+  .upload-icon { font-size: 48px; margin-bottom: 20px; display: block; }
+
+  .upload-area h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .upload-area p { font-size: 15px; color: var(--smoke); margin-bottom: 32px; }
+
+  .upload-types {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .upload-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255,245,236,0.6);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 8px 16px;
+  }
+
+  .bio-input {
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--cream);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 15px;
+    padding: 16px 20px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    display: block;
+    margin: 0 auto 24px;
+  }
+
+  .bio-input::placeholder { color: var(--smoke); }
+  .bio-input:focus { border-color: rgba(255,77,0,0.4); }
+
+  /* PRICING */
+  .pricing-section {
+    padding: 80px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .pricing-card {
+    background: var(--char);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 48px 40px;
+    text-align: left;
+    position: relative;
+  }
+
+  .pricing-card.featured {
+    border-color: rgba(255,77,0,0.3);
+  }
+
+  .pricing-card.featured::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--fire), var(--gold), transparent);
+  }
+
+  .featured-tag {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--fire);
+    color: var(--cream);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+  }
+
+  .plan-name {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--smoke);
+    margin-bottom: 16px;
+  }
+
+  .plan-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .plan-price .currency { font-size: 28px; vertical-align: top; margin-top: 8px; display: inline-block; }
+  .plan-price .period { font-size: 18px; color: var(--smoke); }
+
+  .plan-desc { font-size: 14px; color: var(--smoke); margin-bottom: 32px; line-height: 1.5; }
+
+  .plan-features { list-style: none; margin-bottom: 36px; }
+
+  .plan-features li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .plan-features li .check { color: var(--fire); flex-shrink: 0; }
+  .plan-features li .cross { color: var(--smoke); flex-shrink: 0; }
+  .plan-features li.muted { color: var(--smoke); }
+
+  /* SOCIAL PROOF */
+  .social-section {
+    padding: 80px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .review-card {
+    background: var(--char);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 32px;
+  }
+
+  .review-stars { color: var(--gold); font-size: 14px; margin-bottom: 16px; }
+
+  .review-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255,245,236,0.8);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .reviewer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .reviewer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .reviewer-name { font-size: 13px; font-weight: 600; }
+  .reviewer-handle { font-size: 12px; color: var(--smoke); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+    color: var(--smoke);
+    font-size: 13px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .hero { grid-template-columns: 1fr; padding: 40px 24px; gap: 40px; }
+    .hero-card { display: none; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .steps-section, .upload-section, .pricing-section, .social-section { padding: 60px 24px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 24px; }
+  }
+
+  /* PAGE TRANSITIONS */
+  .container > * {
+    animation: fadeUp 0.6s ease both;
+  }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── UPLOAD SCREEN ── */
-  .hero-label {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--fire); margin-bottom: 20px; border: 1px solid rgba(255,77,0,0.3); padding: 6px 14px;
-  }
-
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 8vw, 80px); line-height: 0.92; letter-spacing: 2px; margin-bottom: 20px; }
-  h1 .fire-line { color: var(--fire); display: block; }
-
-  .subtitle { font-size: 17px; line-height: 1.6; color: rgba(255,245,236,0.65); margin-bottom: 48px; max-width: 560px; }
-
-  .upload-zone {
-    background: var(--char); border: 2px dashed rgba(255,77,0,0.2);
-    padding: 40px; margin-bottom: 20px; transition: all 0.3s; cursor: pointer; text-align: center; position: relative;
-  }
-  .upload-zone:hover, .upload-zone.dragover { border-color: var(--fire); background: rgba(255,77,0,0.04); }
-  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .upload-zone-icon { font-size: 40px; margin-bottom: 14px; display: block; }
-  .upload-zone h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-  .upload-zone p { font-size: 14px; color: var(--smoke); }
-
-  .preview-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center; }
-  .preview-thumb { width: 80px; height: 80px; object-fit: cover; border: 1px solid rgba(255,77,0,0.3); }
-
-  .bio-section { margin-bottom: 20px; }
-  .bio-section label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--smoke); margin-bottom: 10px; }
-
-  textarea {
-    width: 100%; background: var(--char); border: 1px solid rgba(255,255,255,0.08);
-    color: var(--cream); font-family: 'Instrument Sans', sans-serif; font-size: 15px;
-    padding: 16px 20px; resize: vertical; outline: none; transition: border-color 0.2s; min-height: 100px;
-  }
-  textarea::placeholder { color: var(--smoke); }
-  textarea:focus { border-color: rgba(255,77,0,0.4); }
-
-  .platform-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
-  .platform-btn {
-    background: var(--char); border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,245,236,0.6); padding: 10px 20px; font-family: 'Instrument Sans', sans-serif;
-    font-size: 13px; cursor: pointer; transition: all 0.2s;
-  }
-  .platform-btn.selected { border-color: var(--fire); color: var(--cream); background: rgba(255,77,0,0.08); }
-
-  .btn-primary {
-    background: var(--fire); color: var(--cream); border: none; padding: 18px 48px;
-    font-family: 'Instrument Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-    transition: all 0.2s; width: 100%; animation: pulse-fire 2.5s ease-in-out infinite;
-  }
-  @keyframes pulse-fire {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,0,0); }
-    50% { box-shadow: 0 0 30px 6px rgba(255,77,0,0.2); }
-  }
-  .btn-primary:hover { background: var(--fire-soft); transform: translateY(-1px); }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; animation: none; }
-
-  .btn-secondary {
-    background: transparent; color: var(--cream); border: 1px solid rgba(255,255,255,0.15);
-    padding: 14px 32px; font-family: 'Instrument Sans', sans-serif; font-size: 15px;
-    cursor: pointer; transition: all 0.2s; width: 100%; margin-top: 12px;
-  }
-  .btn-secondary:hover { border-color: var(--fire); color: var(--fire); }
-
-  /* ── LOADING ── */
-  #screen-loading { text-align: center; padding: 80px 0; }
-  .fire-loader { font-size: 64px; display: block; margin-bottom: 32px; animation: bounce 0.8s ease-in-out infinite alternate; }
-  @keyframes bounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-16px) scale(1.1); } }
-  .loading-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 2px; margin-bottom: 16px; }
-
-  .loading-steps { list-style: none; margin: 32px auto; max-width: 320px; text-align: left; }
-  .loading-steps li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--smoke); padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); transition: color 0.3s; }
-  .loading-steps li.done { color: var(--cream); }
-  .loading-steps li.active { color: var(--fire); }
-  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.15); flex-shrink: 0; transition: background 0.3s; }
-  .loading-steps li.done .step-dot { background: var(--green); }
-  .loading-steps li.active .step-dot { background: var(--fire); box-shadow: 0 0 8px rgba(255,77,0,0.6); animation: blink 1s ease-in-out infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-  /* ── RESULT SHARED STYLES ── */
-  .result-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
-  .result-tag { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--fire); margin-bottom: 12px; }
-  .result-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 1px; line-height: 1; }
-  .big-score { text-align: center; flex-shrink: 0; }
-  .score-num { font-family: 'Bebas Neue', sans-serif; font-size: 80px; line-height: 1; color: var(--fire); }
-  .score-denom { font-size: 28px; color: var(--smoke); }
-  .score-label { font-size: 12px; color: var(--smoke); letter-spacing: 1px; text-transform: uppercase; }
-
-  .roast-card { background: var(--char); border: 1px solid rgba(255,77,0,0.1); padding: 28px 32px; margin-bottom: 16px; position: relative; transition: border-color 0.2s; }
-  .roast-card:hover { border-color: rgba(255,77,0,0.25); }
-  .roast-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .roast-emoji { font-size: 22px; flex-shrink: 0; }
-  .roast-category { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--fire); }
-  .roast-severity { margin-left: auto; font-size: 11px; padding: 3px 10px; }
-  .severity-high { background: rgba(255,77,0,0.15); color: var(--fire); }
-  .severity-mid { background: rgba(255,184,0,0.15); color: var(--gold); }
-  .severity-low { background: rgba(0,200,83,0.1); color: var(--green); }
-  .roast-text { font-size: 15px; line-height: 1.65; color: rgba(255,245,236,0.85); }
-
-  /* ── FREEMIUM LOCK ── */
-  .locked-section { position: relative; margin-top: 24px; }
-  .locked-blur { filter: blur(6px); opacity: 0.35; pointer-events: none; user-select: none; }
-  .unlock-overlay {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 16px;
-    background: radial-gradient(ellipse at center, rgba(15,10,7,0.92) 40%, transparent 100%);
-  }
-  .unlock-title { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; text-align: center; }
-  .unlock-perks { list-style: none; font-size: 13px; color: rgba(255,245,236,0.7); text-align: center; line-height: 1.8; }
-  .unlock-perks li::before { content: "✓ "; color: var(--fire); }
-  .unlock-price-badge { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 1px; }
-
-  .btn-unlock {
-    background: var(--fire); color: var(--cream); border: none; padding: 16px 48px;
-    font-family: 'Instrument Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-    animation: pulse-fire 2s ease-in-out infinite;
-  }
-  .btn-unlock:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
-
-  /* ── STRIPE MODAL ── */
-  .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100;
-    display: flex; align-items: center; justify-content: center; padding: 24px;
-    animation: fadeIn 0.2s ease;
-  }
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  .modal-backdrop.hidden { display: none; }
-
-  .modal {
-    background: var(--char); border: 1px solid rgba(255,77,0,0.2);
-    max-width: 460px; width: 100%; padding: 40px;
-    position: relative;
-    animation: slideUp 0.3s ease;
-  }
-  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-
-  .modal-close {
-    position: absolute; top: 16px; right: 16px;
-    background: none; border: none; color: var(--smoke); font-size: 20px; cursor: pointer;
-  }
-  .modal-close:hover { color: var(--cream); }
-
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; margin-bottom: 8px; }
-  .modal-subtitle { font-size: 14px; color: var(--smoke); margin-bottom: 32px; line-height: 1.5; }
-
-  .modal-perks { list-style: none; margin-bottom: 28px; }
-  .modal-perks li { display: flex; gap: 10px; font-size: 14px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .modal-perks li span:first-child { color: var(--fire); }
-
-  .modal-price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .modal-price-label { font-size: 14px; color: var(--smoke); }
-  .modal-price { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--gold); }
-
-  #stripe-btn {
-    width: 100%; padding: 18px; background: var(--fire); border: none; color: var(--cream);
-    font-family: 'Instrument Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-    transition: background 0.2s; margin-bottom: 12px;
-  }
-  #stripe-btn:hover { background: var(--fire-soft); }
-  #stripe-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .stripe-badge { text-align: center; font-size: 12px; color: var(--smoke); display: flex; align-items: center; justify-content: center; gap: 6px; }
-
-  /* ── FULL RESULT ── */
-  .full-result-banner {
-    background: linear-gradient(135deg, rgba(255,77,0,0.12), rgba(255,184,0,0.06));
-    border: 1px solid rgba(255,77,0,0.3); padding: 20px 28px;
-    display: flex; align-items: center; gap: 16px; margin-bottom: 40px;
-  }
-  .full-result-banner .icon { font-size: 28px; flex-shrink: 0; }
-  .full-result-banner h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-  .full-result-banner p { font-size: 13px; color: var(--smoke); }
-
-  .bio-versions { margin-top: 32px; }
-  .bio-versions h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 20px; }
-  .bio-version { background: var(--char); border: 1px solid rgba(255,255,255,0.06); padding: 24px 28px; margin-bottom: 12px; position: relative; }
-  .bio-version-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--smoke); margin-bottom: 12px; }
-  .bio-version-text { font-size: 15px; line-height: 1.6; color: var(--cream); font-style: italic; }
-  .copy-btn { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--smoke); font-size: 12px; padding: 6px 12px; cursor: pointer; font-family: 'Instrument Sans', sans-serif; transition: all 0.2s; }
-  .copy-btn:hover { border-color: var(--fire); color: var(--fire); }
-
-  .share-section { margin-top: 48px; text-align: center; padding: 40px; background: var(--char); border: 1px solid rgba(255,255,255,0.05); }
-  .share-section h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; margin-bottom: 8px; }
-  .share-section p { font-size: 14px; color: var(--smoke); margin-bottom: 24px; }
-  .share-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .share-btn { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--cream); padding: 12px 24px; font-family: 'Instrument Sans', sans-serif; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-  .share-btn:hover { border-color: var(--fire); }
-
-  .error-box { background: rgba(255,77,0,0.08); border: 1px solid rgba(255,77,0,0.3); padding: 16px 20px; font-size: 14px; color: var(--fire-soft); margin-bottom: 20px; display: none; }
-  .divider { height: 1px; background: rgba(255,255,255,0.05); margin: 40px 0; }
-  .tooltip-text { font-size: 13px; color: var(--smoke); margin-top: 12px; text-align: center; }
-
-  @media (max-width: 600px) {
-    .result-header { flex-direction: column; }
-    .score-num { font-size: 60px; }
-    .modal { padding: 28px 20px; }
-  }
+  .hero { animation-delay: 0.1s; }
+  .steps-section { animation-delay: 0.2s; }
 </style>
 </head>
 <body>
 <div class="container">
 
+  <!-- NAV -->
   <nav>
     <div class="logo">Roast<span>My</span>Profile</div>
-    <div class="nav-badge">🔥 KI-Analyse</div>
+    <button class="nav-cta" onclick="scrollToUpload()">Jetzt roasten 🔥</button>
   </nav>
 
-  <!-- ══ SCREEN 1: UPLOAD ══ -->
-  <div class="screen active" id="screen-upload">
-    <div class="hero-label">🔥 Ehrliches KI-Feedback für dein Dating-Profil</div>
-    <h1>Dein Profil<span class="fire-line">kriegt die Wahrheit.</span></h1>
-    <p class="subtitle">Lade dein Profil hoch – unsere KI sagt dir genau, warum du keine Matches bekommst. Kostenloser Mini-Roast. Kein Konto nötig.</p>
-
-    <div id="error-box" class="error-box"></div>
-
-    <div style="margin-bottom:24px;">
-      <div style="font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--smoke);margin-bottom:12px;">Welche Plattform?</div>
-      <div class="platform-row">
-        <button class="platform-btn selected" data-platform="Tinder" onclick="selectPlatform(this)">🔥 Tinder</button>
-        <button class="platform-btn" data-platform="Bumble" onclick="selectPlatform(this)">🐝 Bumble</button>
-        <button class="platform-btn" data-platform="Hinge" onclick="selectPlatform(this)">💘 Hinge</button>
-        <button class="platform-btn" data-platform="OkCupid" onclick="selectPlatform(this)">💬 OkCupid</button>
-        <button class="platform-btn" data-platform="Sonstige" onclick="selectPlatform(this)">✨ Sonstige</button>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-label">🔥 KI-powered Dating Feedback</div>
+      <h1>
+        Dein Profil
+        <span class="fire-text">kriegt auf die Mütze.</span>
+      </h1>
+      <p>Keine netten Lügen. Kein höfliches Rumgedruckse. Unsere KI sagt dir genau, warum du keine Matches bekommst – und wie du das änderst.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToUpload()">Kostenlos testen 🔥</button>
+        <button class="btn-ghost">Beispiel ansehen</button>
+        <div class="trust-badge">✓ Kostenloser Mini-Roast – kein Kreditkarte nötig</div>
       </div>
     </div>
 
-    <div style="margin-bottom:20px;">
-      <div style="font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--smoke);margin-bottom:12px;">Profilfotos & Screenshot (optional)</div>
-      <div class="upload-zone" id="upload-zone">
-        <input type="file" id="file-input" multiple accept="image/*" onchange="handleFiles(this.files)">
-        <span class="upload-zone-icon">📸</span>
-        <h3>Fotos hier ablegen oder klicken</h3>
-        <p>Profilfotos oder Screenshot – je mehr, desto besser</p>
-        <div id="preview-grid" class="preview-grid"></div>
-      </div>
-    </div>
-
-    <div class="bio-section">
-      <label>Deine Bio / Profiltext *</label>
-      <textarea id="bio-input" placeholder='Füge hier deinen Bio-Text ein. Beispiel: "Ich liebe Reisen, Sport und meine Hunde. Suche nach meiner besseren Hälfte 🐶"' rows="5"></textarea>
-    </div>
-
-    <button class="btn-primary" id="start-btn" onclick="startAnalysis()">🔥 Kostenlosen Roast starten</button>
-    <p class="tooltip-text">Kostenlos: 3 Kritikpunkte + Score · Kein Konto nötig</p>
-  </div>
-
-  <!-- ══ SCREEN 2: LOADING ══ -->
-  <div class="screen" id="screen-loading">
-    <span class="fire-loader">🔥</span>
-    <div class="loading-title">KI analysiert dein Profil...</div>
-    <p style="color:var(--smoke);font-size:15px;">Keine Schönfärberei. Kein Mitleid. Nur die Wahrheit.</p>
-    <ul class="loading-steps">
-      <li id="step-1"><span class="step-dot"></span> Fotos & Bio werden eingelesen</li>
-      <li id="step-2"><span class="step-dot"></span> Profil wird analysiert</li>
-      <li id="step-3"><span class="step-dot"></span> Schwachstellen identifiziert</li>
-      <li id="step-4"><span class="step-dot"></span> Roast wird formuliert</li>
-      <li id="step-5"><span class="step-dot"></span> Score wird berechnet</li>
-    </ul>
-  </div>
-
-  <!-- ══ SCREEN 3: FREE RESULT ══ -->
-  <div class="screen" id="screen-free-result">
-    <div class="result-header">
-      <div>
-        <div class="result-tag">🔥 Dein Mini-Roast</div>
-        <h2 id="result-headline">Ergebnis</h2>
-      </div>
-      <div class="big-score">
-        <div class="score-num" id="score-display">–</div>
-        <div class="score-denom">/10</div>
-        <div class="score-label">Match-Score</div>
-      </div>
-    </div>
-
-    <div id="free-roast-items"></div>
-
-    <div class="locked-section">
-      <div class="locked-blur">
-        <div class="roast-card">
-          <div class="roast-card-header">
-            <span class="roast-emoji">💀</span>
-            <span class="roast-category">Foto-Analyse</span>
-            <span class="roast-severity severity-high">KRITISCH</span>
-          </div>
-          <p class="roast-text">Dein zweites Foto zeigt dich in einer Gruppe – niemand weiß wer du bist. Das kostet dich mind. 30% der Swipes...</p>
-        </div>
-        <div class="roast-card">
-          <div class="roast-card-header">
-            <span class="roast-emoji">✏️</span>
-            <span class="roast-category">Optimierte Bio – Version 1</span>
-            <span class="roast-severity severity-low">PREMIUM</span>
-          </div>
-          <p class="roast-text">"Architektur tagsüber, Weinkenner abends – ich such jemanden der beides zu schätzen weiß..."</p>
-        </div>
-        <div class="roast-card">
-          <div class="roast-card-header">
-            <span class="roast-emoji">📈</span>
-            <span class="roast-category">Match-Potenzial</span>
-            <span class="roast-severity severity-mid">WICHTIG</span>
-          </div>
-          <p class="roast-text">Mit diesen 5 Änderungen steigt dein Score signifikant. Hier ist der genaue Plan...</p>
+    <!-- PREVIEW CARD -->
+    <div class="hero-card">
+      <div class="card-tag">🔥 Beispiel Roast</div>
+      <div class="profile-preview">
+        <div class="avatar">😐</div>
+        <div class="profile-info">
+          <h3>Max, 26</h3>
+          <p>"Ich liebe Reisen, Sport und meine Hunde 🐶 Such nach meiner besseren Hälfte"</p>
         </div>
       </div>
-      <div class="unlock-overlay">
-        <div class="unlock-title">🔒 Vollen Roast freischalten</div>
-        <ul class="unlock-perks">
-          <li>10+ Kritikpunkte komplett</li>
-          <li>Detaillierte Foto-Analyse</li>
-          <li>3 optimierte Bio-Versionen</li>
-          <li>Konkreter Verbesserungsplan</li>
-          <li>Match-Potenzial Vorhersage</li>
+
+      <div class="roast-item">
+        <span class="roast-icon">🔥</span>
+        <span class="roast-text"><strong>Bio-Katastrophe:</strong> "Ich liebe Reisen" schreiben alle 3 von 4 Männern. Du bist unsichtbar.</span>
+      </div>
+      <div class="roast-item">
+        <span class="roast-icon">📸</span>
+        <span class="roast-text"><strong>Foto #1:</strong> Gruppenfoto als erstes Bild? Niemand weiß wer du bist. Rotes Flag.</span>
+      </div>
+
+      <div class="blur-overlay">
+        <div class="blurred">
+          <div class="roast-item">
+            <span class="roast-icon">💀</span>
+            <span class="roast-text"><strong>Spiegel-Selfie:</strong> Unordentliches Zimmer im Hintergrund. Das sagt mehr als deine Bio.</span>
+          </div>
+          <div class="roast-item">
+            <span class="roast-icon">✏️</span>
+            <span class="roast-text"><strong>Optimierte Bio:</strong> "Wochenends auf einem Gipfel, werktags..." </span>
+          </div>
+        </div>
+        <div class="unlock-badge">
+          <button class="unlock-btn">🔓 Vollen Roast freischalten</button>
+          <span class="unlock-price">Einmalig 4,99 €</span>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div>
+          <div class="score">3.2</div>
+          <div class="score-label">von 10 Punkten</div>
+        </div>
+        <div style="text-align:right; font-size: 13px; color: var(--smoke); max-width: 140px; line-height: 1.5;">
+          "Ehrlich gesagt... da ist noch Luft nach oben. Viel Luft."
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="steps-section">
+    <div class="section-label">So funktioniert's</div>
+    <h2 class="section-title">Drei Schritte zu mehr Matches</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <span class="step-icon">📤</span>
+        <h3>Upload</h3>
+        <p>Lade deine Profilfotos, deinen Bio-Text und/oder einen Screenshot deines Profils hoch. Je mehr, desto präziser der Roast.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <span class="step-icon">🤖</span>
+        <h3>KI analysiert</h3>
+        <p>Unsere KI analysiert Fotos, Texte und Gesamteindruck – gnadenlos ehrlich, aber mit konkreten Tipps.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <span class="step-icon">💪</span>
+        <h3>Mehr Matches</h3>
+        <p>Du bekommst deinen Roast + optimierte Bio + konkrete Foto-Tipps. Setz sie um und watch the magic happen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- UPLOAD -->
+  <section class="upload-section" id="upload">
+    <div class="section-label">Jetzt starten</div>
+    <h2 class="section-title">Zeig uns was du hast</h2>
+
+    <div class="upload-area" onclick="this.querySelector('input').click()">
+      <input type="file" multiple accept="image/*" style="display:none" onchange="handleUpload(this)">
+      <span class="upload-icon">📁</span>
+      <h3>Dateien hier ablegen oder klicken</h3>
+      <p>Profilfotos, Screenshots – alles was dein Dating-Profil ausmacht</p>
+      <div class="upload-types">
+        <div class="upload-type">📸 Profilfotos</div>
+        <div class="upload-type">📋 Profil-Screenshot</div>
+        <div class="upload-type">✍️ Bio-Text</div>
+      </div>
+      <textarea class="bio-input" rows="4" placeholder="Deine Bio hier einfügen (optional aber empfohlen)..." onclick="event.stopPropagation()"></textarea>
+      <button class="btn-primary" onclick="event.stopPropagation(); startRoast()">🔥 Roast starten – kostenlos</button>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing-section">
+    <div class="section-label">Preise</div>
+    <h2 class="section-title" style="margin: 0 auto 48px; max-width: 100%;">Transparent & Fair</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Gratis</div>
+        <div class="plan-price"><span class="currency">€</span>0</div>
+        <p class="plan-desc">Schnuppere rein. Kein Risiko, keine Kreditkarte.</p>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> 3 Roast-Punkte</li>
+          <li><span class="check">✓</span> Gesamt-Score</li>
+          <li class="muted"><span class="cross">✗</span> Vollständiger Roast</li>
+          <li class="muted"><span class="cross">✗</span> Optimierte Bio</li>
+          <li class="muted"><span class="cross">✗</span> Foto-Analyse</li>
         </ul>
-        <div class="unlock-price-badge">Einmalig nur 4,99 €</div>
-        <button class="btn-unlock" id="unlock-btn" onclick="openPaymentModal()">🔥 Jetzt freischalten – 4,99 €</button>
-        <p style="font-size:12px;color:var(--smoke);">Einmalzahlung · Kein Abo · Sofortzugang</p>
+        <button class="btn-ghost" style="width:100%">Kostenlos starten</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="featured-tag">Beliebt</div>
+        <div class="plan-name">Voller Roast</div>
+        <div class="plan-price"><span class="currency">€</span>4<span style="font-size:32px">,99</span></div>
+        <p class="plan-desc">Einmalig. Kein Abo. Alles drin.</p>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Kompletter Roast (10+ Punkte)</li>
+          <li><span class="check">✓</span> Detaillierte Foto-Analyse</li>
+          <li><span class="check">✓</span> Optimierte Bio (3 Versionen)</li>
+          <li><span class="check">✓</span> Konkrete Verbesserungstipps</li>
+          <li><span class="check">✓</span> Match-Score Vorhersage</li>
+        </ul>
+        <button class="btn-primary" style="width:100%; clip-path: none;">🔥 Jetzt freischalten – 4,99 €</button>
       </div>
     </div>
+  </section>
 
-    <div class="divider"></div>
-    <button class="btn-secondary" onclick="resetApp()">← Neues Profil analysieren</button>
-  </div>
-
-  <!-- ══ SCREEN 4: FULL RESULT ══ -->
-  <div class="screen" id="screen-full-result">
-    <div class="full-result-banner">
-      <span class="icon">🔥</span>
-      <div>
-        <h3>Vollständiger Roast freigeschaltet</h3>
-        <p>Die komplette Wahrheit – keine Ausrede mehr für schlechte Matches.</p>
+  <!-- SOCIAL PROOF -->
+  <section class="social-section">
+    <div class="section-label">Was andere sagen</div>
+    <h2 class="section-title">Die Wahrheit tut weh. Und hilft.</h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Ich dachte mein Profil ist gut. Die KI hat mich vernichtet. Eine Woche später hatte ich 4x mehr Matches. Bestes Geld das ich je ausgegeben habe."</p>
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background: linear-gradient(135deg, #FF4D00, #FF7A3D);">😎</div>
+          <div>
+            <div class="reviewer-name">Tobias K.</div>
+            <div class="reviewer-handle">@tobias_munich · Tinder</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Endlich jemand (was auch immer) der mir sagt was meine Freunde nie sagen würden. Das Foto-Feedback allein war den Preis wert."</p>
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background: linear-gradient(135deg, #FFB800, #FF4D00);">💁</div>
+          <div>
+            <div class="reviewer-name">Sarah M.</div>
+            <div class="reviewer-handle">@sarahm · Bumble</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">★★★★☆</div>
+        <p class="review-text">"Mein Score war eine 2,8. Ich war beleidigt. Ich hab alles umgesetzt. Jetzt bin ich bei 7,4 laut Re-Check. Also... danke?"</p>
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background: linear-gradient(135deg, #1A1208, #FF4D00);">🤷</div>
+          <div>
+            <div class="reviewer-name">Luca F.</div>
+            <div class="reviewer-handle">@luca_wien · Hinge</div>
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="result-header">
-      <div>
-        <div class="result-tag">Komplettanalyse</div>
-        <h2 id="full-result-headline">Dein voller Roast</h2>
-      </div>
-      <div class="big-score">
-        <div class="score-num" id="full-score-display">–</div>
-        <div class="score-denom">/10</div>
-        <div class="score-label">Match-Score</div>
-      </div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo" style="font-size:20px">Roast<span style="color:var(--fire)">My</span>Profile</div>
+    <div style="display:flex; gap: 24px;">
+      <a href="#" style="color:var(--smoke); text-decoration:none;">Datenschutz</a>
+      <a href="#" style="color:var(--smoke); text-decoration:none;">AGB</a>
+      <a href="#" style="color:var(--smoke); text-decoration:none;">Kontakt</a>
     </div>
+    <div>© 2025 RoastMyProfile · Made with 🔥</div>
+  </footer>
 
-    <div id="full-roast-items"></div>
-
-    <div class="bio-versions">
-      <h3>✏️ Deine optimierten Bios</h3>
-      <div id="bio-versions-list"></div>
-    </div>
-
-    <div class="share-section">
-      <h3>Teile deinen Roast 🔥</h3>
-      <p>Zeig der Welt wie brutal ehrlich unsere KI ist</p>
-      <div class="share-btns">
-        <button class="share-btn" onclick="shareResult('twitter')">𝕏 Auf X teilen</button>
-        <button class="share-btn" onclick="shareResult('whatsapp')">💬 Per WhatsApp</button>
-        <button class="share-btn" onclick="shareResult('copy')">🔗 Link kopieren</button>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <button class="btn-secondary" onclick="resetApp()">← Neues Profil analysieren</button>
-  </div>
-
-</div>
-
-<!-- ══ STRIPE PAYMENT MODAL ══ -->
-<div class="modal-backdrop hidden" id="payment-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closePaymentModal()">✕</button>
-    <div class="modal-title">🔥 Vollen Roast freischalten</div>
-    <p class="modal-subtitle">Einmalige Zahlung. Kein Abo. Sofortiger Zugang zu deiner vollständigen Analyse.</p>
-    <ul class="modal-perks">
-      <li><span>🔥</span><span>10+ detaillierte Kritikpunkte</span></li>
-      <li><span>📸</span><span>Vollständige Foto-Analyse</span></li>
-      <li><span>✏️</span><span>3 optimierte Bio-Versionen</span></li>
-      <li><span>📈</span><span>Match-Potenzial Vorhersage</span></li>
-      <li><span>💡</span><span>Konkreter Schritt-für-Schritt Plan</span></li>
-    </ul>
-    <div class="modal-price-row">
-      <span class="modal-price-label">Voller Roast – Einmalzahlung</span>
-      <span class="modal-price">4,99 €</span>
-    </div>
-    <button id="stripe-btn" onclick="initiateStripeCheckout()">💳 Jetzt bezahlen – 4,99 €</button>
-    <div class="stripe-badge">🔒 Sichere Zahlung via <strong style="color:var(--cream);margin-left:4px;">Stripe</strong></div>
-  </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────
-// CONFIG – wird von Vercel env vars befüllt
-// ─────────────────────────────────────────
-const STRIPE_PUBLIC_KEY = 'pk_live_DEIN_STRIPE_PUBLIC_KEY'; // ← wird ersetzt
-
-// ─────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────
-let selectedPlatform = 'Tinder';
-let uploadedImages = [];
-let freeRoastData = null;
-let fullRoastData = null;
-
-// ─────────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function resetApp() {
-  uploadedImages = [];
-  freeRoastData = null;
-  fullRoastData = null;
-  document.getElementById('bio-input').value = '';
-  document.getElementById('preview-grid').innerHTML = '';
-  document.getElementById('start-btn').disabled = false;
-  showScreen('screen-upload');
-}
-
-// ─────────────────────────────────────────
-// PLATFORM
-// ─────────────────────────────────────────
-function selectPlatform(btn) {
-  document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedPlatform = btn.dataset.platform;
-}
-
-// ─────────────────────────────────────────
-// FILE UPLOAD
-// ─────────────────────────────────────────
-function handleFiles(files) {
-  uploadedImages = [];
-  const grid = document.getElementById('preview-grid');
-  grid.innerHTML = '';
-  Array.from(files).slice(0, 6).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      uploadedImages.push(e.target.result);
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.className = 'preview-thumb';
-      grid.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-const zone = document.getElementById('upload-zone');
-zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
-
-// ─────────────────────────────────────────
-// LOADING ANIMATION
-// ─────────────────────────────────────────
-function animateLoadingSteps(callback) {
-  const steps = ['step-1','step-2','step-3','step-4','step-5'];
-  steps.forEach(id => document.getElementById(id).classList.remove('done','active'));
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i > 0) {
-      document.getElementById(steps[i-1]).classList.remove('active');
-      document.getElementById(steps[i-1]).classList.add('done');
-    }
-    if (i < steps.length) {
-      document.getElementById(steps[i]).classList.add('active');
-      i++;
-    } else {
-      clearInterval(interval);
-      setTimeout(callback, 400);
-    }
-  }, 700);
-}
-
-// ─────────────────────────────────────────
-// ERROR
-// ─────────────────────────────────────────
-function showError(msg) {
-  const box = document.getElementById('error-box');
-  box.textContent = '⚠️ ' + msg;
-  box.style.display = 'block';
-  showScreen('screen-upload');
-  document.getElementById('start-btn').disabled = false;
-}
-
-// ─────────────────────────────────────────
-// API CALL → Vercel serverless function
-// ─────────────────────────────────────────
-async function callRoastAPI(isFull) {
-  const bio = document.getElementById('bio-input').value.trim();
-
-  const payload = {
-    platform: selectedPlatform,
-    bio: bio,
-    images: uploadedImages.slice(0, 3).map(img => img.replace(/^data:image\/[^;]+;base64,/, '')),
-    imageMimeTypes: uploadedImages.slice(0, 3).map(img => {
-      const m = img.match(/^data:(image\/[^;]+);/);
-      return m ? m[1] : 'image/jpeg';
-    }),
-    isFull: isFull
-  };
-
-  const res = await fetch('/api/roast', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || `Fehler ${res.status}`);
+  function scrollToUpload() {
+    document.getElementById('upload').scrollIntoView({ behavior: 'smooth' });
   }
 
-  return res.json();
-}
-
-// ─────────────────────────────────────────
-// RENDER HELPERS
-// ─────────────────────────────────────────
-function renderRoastItems(items, containerId) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  const sevMap = { 'hoch': ['severity-high','KRITISCH'], 'mittel': ['severity-mid','WICHTIG'], 'niedrig': ['severity-low','OK'] };
-  (items || []).forEach(item => {
-    const [cls, lbl] = sevMap[item.severity] || ['severity-mid', item.severity?.toUpperCase() || ''];
-    container.innerHTML += `
-      <div class="roast-card">
-        <div class="roast-card-header">
-          <span class="roast-emoji">${item.emoji || '🔥'}</span>
-          <span class="roast-category">${item.category || ''}</span>
-          <span class="roast-severity ${cls}">${lbl}</span>
-        </div>
-        <p class="roast-text">${item.text || ''}</p>
-      </div>`;
-  });
-}
-
-// ─────────────────────────────────────────
-// START ANALYSIS (free)
-// ─────────────────────────────────────────
-async function startAnalysis() {
-  const bio = document.getElementById('bio-input').value.trim();
-  if (!bio && uploadedImages.length === 0) {
-    showError('Bitte füge mindestens deinen Bio-Text oder ein Foto hinzu.');
-    return;
-  }
-  document.getElementById('error-box').style.display = 'none';
-  document.getElementById('start-btn').disabled = true;
-  showScreen('screen-loading');
-
-  // Track event
-  if (window.plausible) plausible('roast_started');
-
-  animateLoadingSteps(async () => {
-    try {
-      const data = await callRoastAPI(false);
-      freeRoastData = data;
-      document.getElementById('result-headline').textContent = data.headline || 'Dein Roast';
-      document.getElementById('score-display').textContent = data.score || '?';
-      renderRoastItems(data.roast_items, 'free-roast-items');
-      showScreen('screen-free-result');
-      if (window.plausible) plausible('free_roast_completed');
-    } catch(e) {
-      showError(e.message || 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+  function handleUpload(input) {
+    if (input.files.length > 0) {
+      const area = input.closest('.upload-area');
+      const icon = area.querySelector('.upload-icon');
+      icon.textContent = '✅';
+      area.querySelector('h3').textContent = `${input.files.length} Datei(en) bereit`;
     }
-  });
-}
+  }
 
-// ─────────────────────────────────────────
-// STRIPE PAYMENT MODAL
-// ─────────────────────────────────────────
-function openPaymentModal() {
-  document.getElementById('payment-modal').classList.remove('hidden');
-  if (window.plausible) plausible('checkout_opened');
-}
+  function startRoast() {
+    const btn = event.target;
+    btn.textContent = '🔥 Analysiere...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = '✅ Roast bereit – weiter zur Vorschau';
+      btn.disabled = false;
+    }, 2000);
+  }
 
-function closePaymentModal() {
-  document.getElementById('payment-modal').classList.add('hidden');
-}
-
-// Close on backdrop click
-document.getElementById('payment-modal').addEventListener('click', function(e) {
-  if (e.target === this) closePaymentModal();
-});
-
-async function initiateStripeCheckout() {
-  const btn = document.getElementById('stripe-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Weiterleitung zu Stripe...';
-
-  try {
-    // Call Vercel serverless function to create Stripe Checkout Session
-    const res = await fetch('/api/create-checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ platform: selectedPlatform })
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
     });
+  }, { threshold: 0.1 });
 
-    const { url, error } = await res.json();
-
-    if (error) throw new Error(error);
-    if (!url) throw new Error('Keine Checkout-URL erhalten');
-
-    // Redirect to Stripe Checkout
-    window.location.href = url;
-
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = '💳 Jetzt bezahlen – 4,99 €';
-    alert('Fehler: ' + (e.message || 'Zahlung konnte nicht gestartet werden.'));
-  }
-}
-
-// ─────────────────────────────────────────
-// AFTER PAYMENT SUCCESS
-// Check URL params on load → if ?success=true, load full roast
-// ─────────────────────────────────────────
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('success') === 'true') {
-    // Payment successful – load full roast
-    loadFullRoastAfterPayment();
-  }
-  if (params.get('canceled') === 'true') {
-    showError('Zahlung abgebrochen. Du kannst es jederzeit erneut versuchen.');
-  }
-});
-
-async function loadFullRoastAfterPayment() {
-  showScreen('screen-loading');
-  animateLoadingSteps(async () => {
-    try {
-      const data = await callRoastAPI(true);
-      fullRoastData = data;
-      document.getElementById('full-result-headline').textContent = data.headline || 'Vollständiger Roast';
-      document.getElementById('full-score-display').textContent = data.score || '?';
-      renderRoastItems(data.roast_items, 'full-roast-items');
-
-      // Bio versions
-      const bioList = document.getElementById('bio-versions-list');
-      bioList.innerHTML = '';
-      (data.bio_versions || []).forEach((v, i) => {
-        bioList.innerHTML += `
-          <div class="bio-version">
-            <div class="bio-version-label">Version ${i+1} – ${v.label || ''}</div>
-            <p class="bio-version-text">${v.text || ''}</p>
-            <button class="copy-btn" onclick="copyBio(${i})">Kopieren</button>
-          </div>`;
-      });
-
-      showScreen('screen-full-result');
-      if (window.plausible) plausible('full_roast_completed');
-    } catch(e) {
-      showError(e.message || 'Fehler beim Laden. Bitte kontaktiere uns.');
-    }
+  document.querySelectorAll('.step, .review-card, .pricing-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
   });
-}
-
-// ─────────────────────────────────────────
-// COPY BIO
-// ─────────────────────────────────────────
-function copyBio(index) {
-  if (!fullRoastData?.bio_versions) return;
-  const text = fullRoastData.bio_versions[index]?.text || '';
-  navigator.clipboard.writeText(text).then(() => {
-    const btns = document.querySelectorAll('.copy-btn');
-    if (btns[index]) {
-      btns[index].textContent = '✓ Kopiert!';
-      setTimeout(() => btns[index].textContent = 'Kopieren', 2000);
-    }
-  });
-}
-
-// ─────────────────────────────────────────
-// SHARE
-// ─────────────────────────────────────────
-function shareResult(platform) {
-  const score = freeRoastData?.score || fullRoastData?.score || '?';
-  const text = `Ich hab mein ${selectedPlatform}-Profil von einer KI roasten lassen – Score: ${score}/10 💀🔥 Teste dich auch:`;
-  const url = 'https://roastmyprofile.de';
-  if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text + ' ' + url)}`);
-  else if (platform === 'whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`);
-  else navigator.clipboard.writeText(url).then(() => alert('Link kopiert! 🔥'));
-  if (window.plausible) plausible('share_clicked', { props: { platform } });
-}
 </script>
 </body>
 </html>
