@@ -20,11 +20,25 @@ module.exports = async function handler(req, res) {
 
   const bioText = bio ? `\n\nBio:\n"${bio}"` : '\n\n(Kein Bio-Text angegeben)';
 
-  const systemPrompt = `Du bist ein brutell ehrlicher, witziger Dating-Profil-Coach auf Deutsch fuer ${platform || 'Tinder'}. Antworte NUR mit validem JSON ohne Markdown oder Backticks.`;
+  const systemPrompt = `Du bist ein guter Freund der sich mit Dating auskennt und dem User gerade sein ${platform || 'Tinder'}-Profil kommentiert. Dein Ton: locker, direkt, witzig aber nie gemein. Du redest wie ein echter Mensch auf Deutsch – kein Übersetzer-Deutsch, kein KI-Sprech. Keine englischen Begriffe übersetzen (also NICHT "rote Flagge" oder "rotes Flag" – sag einfach "das ist ein Problem"). Kein "Grüße" oder förmliches Zeugs. Einfach ehrliches Feedback wie unter Kumpels. Antworte NUR mit validem JSON ohne Markdown oder Backticks.`;
 
   const prompt = isFull
-    ? `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}\n\nVollstaendige Analyse als JSON:\n{"score":7.5,"headline":"Kurzer witziger Satz","roast_items":[{"emoji":"🔥","category":"Bio","severity":"hoch","text":"Kommentar hier"}],"bio_versions":[{"label":"Witzig und selbstbewusst","text":"Bio hier"},{"label":"Direkt und interessant","text":"Bio hier"},{"label":"Geheimnisvoll","text":"Bio hier"}]}\n\nGib 8-12 roast_items zurueck. Alles auf Deutsch.`
-    : `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}\n\nMini-Roast als JSON:\n{"score":6.5,"headline":"Kurzer witziger Satz","roast_items":[{"emoji":"🔥","category":"Bio","severity":"hoch","text":"Kommentar hier"}]}\n\nGib genau 3 roast_items zurueck. Alles auf Deutsch.`;
+    ? `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}
+
+Analysiere dieses Dating-Profil komplett. Schreib wie ein Freund der kein Blatt vor den Mund nimmt – locker, konkret, auf Deutsch wie man wirklich spricht.
+
+Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
+{"score":7.5,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-4 Sätze konkretes Feedback wie ein Freund es sagen würde"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":"komplett neue Bio"},{"label":"Direkt & interessant","text":"komplett neue Bio"},{"label":"Geheimnisvoll","text":"komplett neue Bio"}]}
+
+Gib 8-12 roast_items zurück. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch.`
+    : `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}
+
+Gib einen kurzen ehrlichen Kommentar zu diesem Dating-Profil. Schreib wie ein Freund – locker, direkt, auf Deutsch wie man wirklich redet.
+
+Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
+{"score":6.5,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-3 Sätze ehrliches Feedback wie ein Freund es sagen würde"}]}
+
+Genau 3 roast_items. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch, kein KI-Sprech.`;
 
   try {
     const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
@@ -34,7 +48,7 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${process.env.MOONSHOT_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'moonshot-v1-8k',
+        model: 'kimi-k2.5',
         max_tokens: isFull ? 3000 : 1000,
         temperature: 0.7,
         messages: [
