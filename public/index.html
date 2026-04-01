@@ -297,7 +297,33 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 #stripe-btn:disabled{opacity:0.6;cursor:not-allowed;}
 .stripe-note{text-align:center;font-size:12px;color:var(--smoke);}
 
-/* Mobile */
+.btn-example{background:transparent;color:var(--cream);border:1px solid rgba(255,255,255,0.25);padding:16px 36px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:all 0.2s;}
+.btn-example:hover{border-color:var(--fire);color:var(--fire);}
+
+/* Example Modal */
+.ex-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:300;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.ex-modal-bg.hide{display:none;}
+.ex-modal{background:var(--card);border:1px solid rgba(255,69,0,0.25);max-width:520px;width:100%;padding:28px;position:relative;margin:auto;}
+.ex-modal-x{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--smoke);font-size:22px;cursor:pointer;line-height:1;}
+.ex-modal-x:hover{color:var(--cream);}
+.ex-modal-tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--fire);border:1px solid rgba(255,69,0,0.3);padding:4px 10px;display:inline-block;margin-bottom:16px;}
+.ex-score-row{display:flex;align-items:center;gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:20px;}
+.ex-score-num{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--fire);line-height:1;}
+.ex-score-info{flex:1;}
+.ex-score-label{font-size:11px;color:var(--smoke);text-transform:uppercase;letter-spacing:1px;}
+.ex-headline{font-size:16px;font-weight:700;margin-top:4px;}
+.ex-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);padding:14px 16px;margin-bottom:10px;}
+.ex-item-hd{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.ex-item-em{font-size:18px;}
+.ex-item-cat{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--smoke);}
+.ex-item-sev{margin-left:auto;font-size:10px;font-weight:700;padding:2px 7px;}
+.ex-sev-h{background:rgba(255,69,0,0.15);color:var(--fire);}
+.ex-sev-m{background:rgba(255,184,0,0.15);color:var(--gold);}
+.ex-sev-l{background:rgba(34,197,94,0.15);color:var(--green);}
+.ex-item-txt{font-size:13px;color:var(--muted);line-height:1.6;}
+.ex-modal-cta{width:100%;padding:14px;background:var(--fire);border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:background 0.2s;}
+.ex-modal-cta:hover{background:var(--fire2);}
+.ex-modal-note{text-align:center;font-size:12px;color:var(--smoke);margin-top:10px;}
 @media(max-width:768px){
   .pain-grid,.ex-grid,.steps-row,.reviews-grid,.pricing-grid{grid-template-columns:1fr;}
   .steps-row::before{display:none;}
@@ -333,6 +359,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   <p class="hero-sub">Deine Freunde lügen dich an. Unsere KI nicht. <strong>RoastMyProfile</strong> analysiert dein Dating-Profil gnadenlos ehrlich – und zeigt dir in 60 Sekunden was du ändern musst.</p>
   <div class="hero-actions">
     <button class="btn-hero" onclick="showApp()">🔥 Kostenlosen Roast starten</button>
+    <button class="btn-example" onclick="openExample()">👀 Beispiel ansehen</button>
     <div class="hero-note"><span class="icon">✓</span><span>Kein Account · Kostenlos · 60 Sekunden</span></div>
   </div>
   <div class="hero-stats">
@@ -560,6 +587,38 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 </div><!-- /app-inner -->
 </div><!-- /page-app -->
 
+<!-- BEISPIEL MODAL -->
+<div class="ex-modal-bg hide" id="ex-modal">
+  <div class="ex-modal">
+    <button class="ex-modal-x" onclick="closeExample()">✕</button>
+    <div class="ex-modal-tag">👀 Echtes Beispiel – Mini Roast</div>
+    <div class="ex-score-row">
+      <div class="ex-score-num">4.2</div>
+      <div class="ex-score-info">
+        <div class="ex-score-label">Match-Score</div>
+        <div class="ex-headline">"Solide, aber komplett austauschbar."</div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-item-hd"><span class="ex-item-em">📸</span><span class="ex-item-cat">Erstes Foto</span><span class="ex-item-sev ex-sev-h">KRITISCH</span></div>
+      <div class="ex-item-txt">Gruppenfoto als erstes Bild ist ungünstig – niemand weiß sofort wer du bist und die meisten wischen weiter bevor sie rausfinden wollen wer du bist. Das erste Foto sollte ein klares Einzelbild von dir sein, gerne draußen mit natürlichem Licht.</div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-item-hd"><span class="ex-item-em">✍️</span><span class="ex-item-cat">Bio</span><span class="ex-item-sev ex-sev-h">KRITISCH</span></div>
+      <div class="ex-item-txt">"Ich liebe Reisen, Sport und gutes Essen" – das schreiben wortwörtlich Tausende. Deine Bio erklärt nicht warum man mit dir schreiben sollte. Kein konkreter Aufhänger, kein Witz, kein Gesprächsstarter.</div>
+    </div>
+    <div class="ex-item">
+      <div class="ex-item-hd"><span class="ex-item-em">💡</span><span class="ex-item-cat">Gesprächsstarter</span><span class="ex-item-sev ex-sev-m">WICHTIG</span></div>
+      <div class="ex-item-txt">Es gibt nichts worüber man dich ansprechen könnte. Kein Hobby, keine Meinung, keine Eigenheit. Wer dein Profil sieht denkt "okay" – und wischt weiter. Du brauchst mindestens einen konkreten Aufhänger der neugierig macht.</div>
+    </div>
+    <div style="background:rgba(255,69,0,0.06);border:1px solid rgba(255,69,0,0.15);padding:14px 16px;margin-top:16px;font-size:13px;color:var(--muted);line-height:1.6;">
+      🔒 <strong style="color:var(--cream);">Der volle Roast</strong> enthält 10+ Kritikpunkte, vollständige Foto-Analyse und 3 fertig geschriebene Bios die du direkt kopieren kannst.
+    </div>
+    <button class="ex-modal-cta" onclick="closeExample(); showApp();">🔥 Jetzt mein Profil analysieren</button>
+    <div class="ex-modal-note">Kostenloser Mini-Roast · Kein Konto nötig</div>
+  </div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-bg hide" id="modal">
   <div class="modal">
@@ -596,6 +655,17 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 </div><!-- /wrap -->
 
 <script>
+// ── BEISPIEL MODAL ──
+function openExample() {
+  document.getElementById('ex-modal').classList.remove('hide');
+}
+function closeExample() {
+  document.getElementById('ex-modal').classList.add('hide');
+}
+document.getElementById('ex-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('ex-modal')) closeExample();
+});
+
 // ── PAGE NAVIGATION ──
 function showApp() {
   document.getElementById('page-landing').style.display = 'none';
