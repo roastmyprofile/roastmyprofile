@@ -54,7 +54,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({
         model: 'kimi-k2.5',
         max_tokens: isFull ? 3000 : 1000,
-        temperature: 1,
+        temperature: 0.6,
         thinking: { type: 'disabled' },
         messages: [
           { role: 'system', content: systemPrompt },
