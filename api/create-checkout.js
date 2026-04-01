@@ -17,8 +17,8 @@ module.exports = async function handler(req, res) {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'paypal'],
-      customer_email: email || undefined, // E-Mail vorausfüllen
+      payment_method_types: ['card'],
+      customer_email: email || undefined,
       line_items: [
         {
           price_data: {
