@@ -208,6 +208,27 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 .dsgvo-txt a{color:var(--fire);text-decoration:none;}
 .dsgvo-btn{background:var(--fire);color:var(--cream);border:none;padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
 
+/* Kontakt Modal */
+.kontakt-bg{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:400;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.kontakt-bg.hide{display:none;}
+.kontakt-modal{background:#1a1108;border:1px solid rgba(255,255,255,0.08);max-width:520px;width:100%;padding:36px;position:relative;margin:auto;}
+.kontakt-x{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--smoke);font-size:22px;cursor:pointer;}
+.kontakt-x:hover{color:var(--cream);}
+.kontakt-field{margin-bottom:18px;}
+.kontakt-field label{display:block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--smoke);margin-bottom:8px;}
+.kontakt-field input,.kontakt-field textarea,.kontakt-field select{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;outline:none;transition:border-color 0.2s;resize:vertical;}
+.kontakt-field input:focus,.kontakt-field textarea:focus,.kontakt-field select:focus{border-color:rgba(255,69,0,0.4);}
+.kontakt-field input::placeholder,.kontakt-field textarea::placeholder{color:var(--smoke);}
+.kontakt-field select{cursor:pointer;}
+.kontakt-field select option{background:#1a1108;}
+.kontakt-submit{width:100%;padding:15px;background:var(--fire);border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:background 0.2s;margin-top:6px;}
+.kontakt-submit:hover{background:var(--fire2);}
+.kontakt-submit:disabled{opacity:0.6;cursor:not-allowed;}
+.kontakt-success{text-align:center;padding:24px 0;}
+.kontakt-success .k-icon{font-size:48px;margin-bottom:12px;}
+.kontakt-success h3{font-size:20px;font-weight:700;margin-bottom:8px;}
+.kontakt-success p{font-size:14px;color:var(--smoke);}
+
 /* Legal Modal */
 .legal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:400;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
 .legal-bg.hide{display:none;}
@@ -493,10 +514,10 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 <footer>
   <div class="logo" style="font-size:20px;" onclick="showLanding()">Roast<em>My</em>Profile</div>
   <div class="footer-links">
-    <a href="#" onclick="openLegal('impressum')">Impressum</a>
-    <a href="#" onclick="openLegal('datenschutz')">Datenschutz</a>
-    <a href="#" onclick="openLegal('agb')">AGB</a>
-    <a href="/cdn-cgi/l/email-protection#16757978627775625664797765627b6f666479707f7a7338776666">Kontakt</a>
+    <a href="#" onclick="event.preventDefault();openLegal('impressum')">Impressum</a>
+    <a href="#" onclick="event.preventDefault();openLegal('datenschutz')">Datenschutz</a>
+    <a href="#" onclick="event.preventDefault();openLegal('agb')">AGB</a>
+    <a href="#" onclick="event.preventDefault();openKontakt()">Kontakt</a>
   </div>
   <div>© 2025 RoastMyProfile · Dennis Reinhardt</div>
 </footer>
@@ -615,10 +636,51 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 </div><!-- /app-inner -->
 </div><!-- /page-app -->
 
+<!-- KONTAKT MODAL -->
+<div class="kontakt-bg hide" id="kontakt-modal">
+  <div class="kontakt-modal">
+    <button class="kontakt-x" onclick="closeKontakt()">✕</button>
+    <div id="kontakt-form-wrap">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:6px;">Kontakt</div>
+      <p style="font-size:13px;color:var(--smoke);margin-bottom:24px;line-height:1.6;">Fragen, Feedback oder Probleme? Wir antworten innerhalb von 24 Stunden.</p>
+      <div class="kontakt-field">
+        <label>Dein Name</label>
+        <input type="text" id="k-name" placeholder="Max Mustermann">
+      </div>
+      <div class="kontakt-field">
+        <label>E-Mail</label>
+        <input type="email" id="k-email" placeholder="max@beispiel.de">
+      </div>
+      <div class="kontakt-field">
+        <label>Betreff</label>
+        <select id="k-subject">
+          <option value="">Bitte wählen...</option>
+          <option value="Technisches Problem">Technisches Problem</option>
+          <option value="Frage zur Zahlung">Frage zur Zahlung</option>
+          <option value="Geld-zurück-Garantie">Geld-zurück-Garantie</option>
+          <option value="Feedback">Feedback</option>
+          <option value="Sonstiges">Sonstiges</option>
+        </select>
+      </div>
+      <div class="kontakt-field">
+        <label>Nachricht</label>
+        <textarea id="k-message" rows="5" placeholder="Wie können wir dir helfen?"></textarea>
+      </div>
+      <button class="kontakt-submit" id="k-submit" onclick="sendKontakt()">📨 Nachricht senden</button>
+      <p style="font-size:11px;color:var(--smoke);margin-top:12px;text-align:center;">Oder direkt per Mail: <a href="mailto:contact@roastmyprofile.app" style="color:var(--fire);">contact@roastmyprofile.app</a></p>
+    </div>
+    <div id="kontakt-success" class="kontakt-success" style="display:none;">
+      <div class="k-icon">✅</div>
+      <h3>Nachricht gesendet!</h3>
+      <p>Wir melden uns innerhalb von 24 Stunden bei dir.<br>Check auch deinen Spam-Ordner.</p>
+    </div>
+  </div>
+</div>
+
 <!-- DSGVO BANNER -->
 <div class="dsgvo-banner" id="dsgvo-banner">
   <div class="dsgvo-txt">
-    🔒 Wir nutzen <strong style="color:var(--cream);">Plausible Analytics</strong> – 100% cookie-frei und DSGVO-konform. Keine Tracking-Cookies, keine Weitergabe an Dritte. <a href="#" onclick="openLegal('datenschutz')">Datenschutzerklärung</a>
+    🔒 Wir nutzen <strong style="color:var(--cream);">Plausible Analytics</strong> – 100% cookie-frei und DSGVO-konform. Keine Tracking-Cookies, keine Weitergabe an Dritte. <a href="#" onclick="event.preventDefault();openLegal('datenschutz')">Datenschutzerklärung</a>
   </div>
   <button class="dsgvo-btn" onclick="acceptDsgvo()">Verstanden</button>
 </div>
@@ -756,7 +818,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
     <div style="margin-bottom:16px;">
       <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--smoke);line-height:1.5;">
         <input type="checkbox" id="agb-check" style="margin-top:2px;flex-shrink:0;accent-color:var(--fire);">
-        <span>Ich akzeptiere die <a href="#" onclick="openLegal('agb')" style="color:var(--fire);">AGB</a> und die <a href="#" onclick="openLegal('datenschutz')" style="color:var(--fire);">Datenschutzerklärung</a>. Ich stimme ausdrücklich zu, dass die Ausführung vor Ablauf der Widerrufsfrist beginnt und ich damit mein Widerrufsrecht verliere.</span>
+        <span>Ich akzeptiere die <a href="#" onclick="event.preventDefault();openLegal('agb')" style="color:var(--fire);">AGB</a> und die <a href="#" onclick="event.preventDefault();openLegal('datenschutz')" style="color:var(--fire);">Datenschutzerklärung</a>. Ich stimme ausdrücklich zu, dass die Ausführung vor Ablauf der Widerrufsfrist beginnt und ich damit mein Widerrufsrecht verliere.</span>
       </label>
     </div>
     <button id="stripe-btn" onclick="doCheckout()">💳 Jetzt bezahlen – 4,99 €</button>
@@ -767,6 +829,52 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 </div><!-- /wrap -->
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── KONTAKT MODAL ──
+function openKontakt() {
+  document.getElementById('kontakt-modal').classList.remove('hide');
+  document.getElementById('kontakt-form-wrap').style.display = 'block';
+  document.getElementById('kontakt-success').style.display = 'none';
+}
+function closeKontakt() {
+  document.getElementById('kontakt-modal').classList.add('hide');
+}
+document.getElementById('kontakt-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('kontakt-modal')) closeKontakt();
+});
+async function sendKontakt() {
+  const name = document.getElementById('k-name').value.trim();
+  const email = document.getElementById('k-email').value.trim();
+  const subject = document.getElementById('k-subject').value;
+  const message = document.getElementById('k-message').value.trim();
+  if (!name || !email || !subject || !message) {
+    alert('Bitte alle Felder ausfüllen.');
+    return;
+  }
+  const btn = document.getElementById('k-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ Wird gesendet...';
+  try {
+    await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, email,
+        platform: 'Kontaktformular',
+        roastData: {
+          score: 0,
+          headline: `Kontaktanfrage: ${subject}`,
+          roast_items: [{ emoji: '✉️', category: 'Nachricht', severity: 'niedrig', text: message }],
+          bio_versions: []
+        }
+      })
+    });
+  } catch(e) { console.log('Email send error:', e); }
+  document.getElementById('kontakt-form-wrap').style.display = 'none';
+  document.getElementById('kontakt-success').style.display = 'block';
+  btn.disabled = false;
+  btn.textContent = '📨 Nachricht senden';
+}
+
 // ── DSGVO BANNER ──
 function acceptDsgvo() {
   document.getElementById('dsgvo-banner').classList.add('hide');
