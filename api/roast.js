@@ -45,26 +45,31 @@ Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
 Genau 3 roast_items. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch, kein KI-Sprech.`;
 
   try {
-    const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.MOONSHOT_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'kimi-k2.5',
-        max_tokens: isFull ? 3000 : 1000,
-        temperature: 0.7,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt }
-        ]
-      })
-    });
+    // Versuche kimi-k2.5, Fallback auf moonshot-v1-8k
+    let response, lastErr;
+    for (const model of ['kimi-k2.5', 'moonshot-v1-8k', 'moonshot-v1-32k']) {
+      response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.MOONSHOT_API_KEY}`
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: isFull ? 3000 : 1000,
+          temperature: 1,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: prompt }
+          ]
+        })
+      });
+      if (response.ok) { console.log('Model used:', model); break; }
+      lastErr = await response.json().catch(() => ({}));
+      console.error(`Model ${model} failed (${response.status}):`, JSON.stringify(lastErr));
+    }
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      console.error('Moonshot API error:', JSON.stringify(err));
       return res.status(500).json({ error: 'KI-Analyse fehlgeschlagen. Bitte erneut versuchen.' });
     }
 
