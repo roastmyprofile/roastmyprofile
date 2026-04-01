@@ -1,5 +1,5 @@
 // api/roast.js
-// Vercel Serverless Function – Kimi K2.5 API (OpenAI-kompatibel)
+// Vercel Serverless Function – Moonshot API
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -8,41 +8,23 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { platform, bio, images, imageMimeTypes, isFull } = req.body;
+  const { platform, bio, images, isFull } = req.body;
 
   if (!bio && (!images || images.length === 0)) {
     return res.status(400).json({ error: 'Kein Bio-Text oder Foto angegeben.' });
   }
 
-  // Kimi K2.5 nutzt OpenAI-Format: image_url mit base64
-  const userContent = [];
+  const imageHint = (images && images.length > 0)
+    ? `\n\n(Der User hat ${images.length} Profilfoto(s) hochgeladen.)`
+    : '';
 
-  if (images && images.length > 0) {
-    images.slice(0, 3).forEach((imgData, idx) => {
-      if (imgData) {
-        const mimeType = imageMimeTypes?.[idx] || 'image/jpeg';
-        userContent.push({
-          type: 'image_url',
-          image_url: { url: `data:${mimeType};base64,${imgData}` }
-        });
-      }
-    });
-  }
+  const bioText = bio ? `\n\nBio:\n"${bio}"` : '\n\n(Kein Bio-Text angegeben)';
 
-  const bioText = bio ? `\n\nBio/Profiltext:\n"${bio}"` : '\n\n(Kein Bio-Text angegeben)';
-  const systemPrompt = `Du bist ein brutell ehrlicher, witziger Dating-Profil-Coach auf Deutsch für ${platform || 'Tinder'}. Dein Ton ist wie ein guter Freund der kein Blatt vor den Mund nimmt. Antworte NUR mit validem JSON ohne Markdown oder Backticks.`;
+  const systemPrompt = `Du bist ein brutell ehrlicher, witziger Dating-Profil-Coach auf Deutsch fuer ${platform || 'Tinder'}. Antworte NUR mit validem JSON ohne Markdown oder Backticks.`;
 
-  if (!isFull) {
-    userContent.push({
-      type: 'text',
-      text: `Plattform: ${platform || 'Tinder'}${bioText}\n\nAnalysiere dieses Dating-Profil und gib einen Mini-Roast zurück.\nNUR dieses JSON (kein Markdown):\n{\n  "score": <1.0-10.0>,\n  "headline": <witziger Satz max 8 Wörter>,\n  "roast_items": [\n    { "emoji": <Emoji>, "category": <Kategorie>, "severity": <"hoch"|"mittel"|"niedrig">, "text": <2-3 Sätze witzig> }\n  ]\n}\nExakt 3 roast_items. Deutsch.`
-    });
-  } else {
-    userContent.push({
-      type: 'text',
-      text: `Plattform: ${platform || 'Tinder'}${bioText}\n\nVollständige Analyse. NUR dieses JSON (kein Markdown):\n{\n  "score": <1.0-10.0>,\n  "headline": <witziger Satz>,\n  "roast_items": [\n    { "emoji": <Emoji>, "category": <Kategorie>, "severity": <"hoch"|"mittel"|"niedrig">, "text": <2-4 Sätze mit Tipp> }\n  ],\n  "bio_versions": [\n    { "label": "Witzig & selbstbewusst", "text": <Bio> },\n    { "label": "Direkt & interessant", "text": <Bio> },\n    { "label": "Geheimnisvoll", "text": <Bio> }\n  ]\n}\n8-12 roast_items. Deutsch. Konkret.`
-    });
-  }
+  const prompt = isFull
+    ? `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}\n\nVollstaendige Analyse als JSON:\n{"score":7.5,"headline":"Kurzer witziger Satz","roast_items":[{"emoji":"🔥","category":"Bio","severity":"hoch","text":"Kommentar hier"}],"bio_versions":[{"label":"Witzig und selbstbewusst","text":"Bio hier"},{"label":"Direkt und interessant","text":"Bio hier"},{"label":"Geheimnisvoll","text":"Bio hier"}]}\n\nGib 8-12 roast_items zurueck. Alles auf Deutsch.`
+    : `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}\n\nMini-Roast als JSON:\n{"score":6.5,"headline":"Kurzer witziger Satz","roast_items":[{"emoji":"🔥","category":"Bio","severity":"hoch","text":"Kommentar hier"}]}\n\nGib genau 3 roast_items zurueck. Alles auf Deutsch.`;
 
   try {
     const response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
@@ -52,35 +34,27 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${process.env.MOONSHOT_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'kimi-k2.5',
+        model: 'moonshot-v1-8k',
         max_tokens: isFull ? 3000 : 1000,
-        temperature: 0.6,
-        thinking: { type: 'disabled' },
+        temperature: 0.7,
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: userContent }
+          { role: 'user', content: prompt }
         ]
       })
     });
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
-      console.error('Kimi API error:', JSON.stringify(err));
+      console.error('Moonshot API error:', JSON.stringify(err));
       return res.status(500).json({ error: 'KI-Analyse fehlgeschlagen. Bitte erneut versuchen.' });
     }
 
     const data = await response.json();
     const rawText = data.choices?.[0]?.message?.content || '';
-    console.log('Kimi raw response:', rawText.substring(0, 200));
+    console.log('Raw response:', rawText.substring(0, 150));
 
-    // Robuster JSON Parser
-    let clean = rawText
-      .replace(/```json\s*/gi, '')
-      .replace(/```\s*/g, '')
-      .replace(/^\s*[\r\n]/gm, '')
-      .trim();
-
-    // Falls Kimi Text vor dem JSON schreibt, extrahiere nur den JSON Teil
+    let clean = rawText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
     const jsonStart = clean.indexOf('{');
     const jsonEnd = clean.lastIndexOf('}');
     if (jsonStart !== -1 && jsonEnd !== -1) {
@@ -91,14 +65,14 @@ module.exports = async function handler(req, res) {
     try {
       parsed = JSON.parse(clean);
     } catch (e) {
-      console.error('JSON parse error:', e.message, 'Raw:', clean.substring(0, 300));
-      return res.status(500).json({ error: 'KI-Antwort konnte nicht verarbeitet werden. Bitte nochmal versuchen.' });
+      console.error('JSON parse failed:', clean.substring(0, 300));
+      return res.status(500).json({ error: 'KI-Antwort ungueltig. Bitte nochmal versuchen.' });
     }
 
     return res.status(200).json(parsed);
 
   } catch (err) {
-    console.error('Roast API error:', err.message);
-    return res.status(500).json({ error: 'Fehler aufgetreten. Bitte erneut versuchen.' });
+    console.error('Roast handler error:', err.message);
+    return res.status(500).json({ error: 'Serverfehler. Bitte erneut versuchen.' });
   }
-}
+};
