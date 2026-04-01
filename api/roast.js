@@ -55,6 +55,7 @@ module.exports = async function handler(req, res) {
         model: 'kimi-k2.5',
         max_tokens: isFull ? 3000 : 1000,
         temperature: 1,
+        thinking: { type: 'disabled' },
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userContent }
@@ -64,26 +65,40 @@ module.exports = async function handler(req, res) {
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
-      console.error('Kimi API error:', err);
+      console.error('Kimi API error:', JSON.stringify(err));
       return res.status(500).json({ error: 'KI-Analyse fehlgeschlagen. Bitte erneut versuchen.' });
     }
 
     const data = await response.json();
     const rawText = data.choices?.[0]?.message?.content || '';
-    const clean = rawText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    console.log('Kimi raw response:', rawText.substring(0, 200));
+
+    // Robuster JSON Parser
+    let clean = rawText
+      .replace(/```json\s*/gi, '')
+      .replace(/```\s*/g, '')
+      .replace(/^\s*[\r\n]/gm, '')
+      .trim();
+
+    // Falls Kimi Text vor dem JSON schreibt, extrahiere nur den JSON Teil
+    const jsonStart = clean.indexOf('{');
+    const jsonEnd = clean.lastIndexOf('}');
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      clean = clean.substring(jsonStart, jsonEnd + 1);
+    }
 
     let parsed;
-    try { parsed = JSON.parse(clean); }
-    catch {
-      const match = clean.match(/\{[\s\S]*\}/);
-      if (match) parsed = JSON.parse(match[0]);
-      else throw new Error('JSON parse failed');
+    try {
+      parsed = JSON.parse(clean);
+    } catch (e) {
+      console.error('JSON parse error:', e.message, 'Raw:', clean.substring(0, 300));
+      return res.status(500).json({ error: 'KI-Antwort konnte nicht verarbeitet werden. Bitte nochmal versuchen.' });
     }
 
     return res.status(200).json(parsed);
 
   } catch (err) {
-    console.error('Roast API error:', err);
+    console.error('Roast API error:', err.message);
     return res.status(500).json({ error: 'Fehler aufgetreten. Bitte erneut versuchen.' });
   }
 }
