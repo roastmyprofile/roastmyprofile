@@ -201,6 +201,10 @@ textarea::placeholder{color:var(--smoke);}
 textarea:focus{border-color:rgba(255,69,0,0.4);}
 
 .btn-start{background:var(--fire);color:var(--cream);border:none;padding:18px 40px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:all 0.2s;width:100%;animation:pulse-f 2.5s ease-in-out infinite;}
+.divider-or{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--smoke);font-size:13px;}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.07);}
+.btn-start-full{width:100%;padding:16px;background:transparent;border:1px solid rgba(255,184,0,0.4);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));transition:all 0.2s;margin-bottom:8px;}
+.btn-start-full:hover{background:rgba(255,184,0,0.08);border-color:var(--gold);}
 @keyframes pulse-f{0%,100%{box-shadow:0 0 0 0 rgba(255,69,0,0)}50%{box-shadow:0 0 30px 6px rgba(255,69,0,0.2)}}
 .btn-start:hover{background:var(--fire2);}
 .btn-start:disabled{opacity:0.5;cursor:not-allowed;animation:none;}
@@ -520,6 +524,9 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 
     <button class="btn-start" id="start-btn" onclick="startRoast()">🔥 Kostenlosen Roast starten</button>
     <p class="hint-txt">Kostenlos: 3 Kritikpunkte + Score · Kein Konto nötig</p>
+    <div class="divider-or"><span>oder</span></div>
+    <button class="btn-start-full" onclick="openModal()">💳 Direkt vollen Roast kaufen – 4,99 €</button>
+    <p class="hint-txt" style="text-align:center;">10+ Kritikpunkte · 3 optimierte Bios · Einmalzahlung</p>
   </div>
 
   <!-- LOADING SCREEN -->
