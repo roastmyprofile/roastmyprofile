@@ -27,16 +27,20 @@ module.exports = async function handler(req, res) {
 
 Analysiere dieses Dating-Profil komplett. Schreib wie ein Freund der kein Blatt vor den Mund nimmt – locker, konkret, auf Deutsch wie man wirklich spricht.
 
+WICHTIG für den Score: Sei ehrlich und realistisch. Die meisten Profile liegen zwischen 3 und 7. Nur wirklich starke Profile bekommen über 8. Schwache Profile bekommen 2-4. Vergib den Score der wirklich passt – nicht immer Mitte.
+
 Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
-{"score":7.5,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-4 Sätze konkretes Feedback wie ein Freund es sagen würde"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":"komplett neue Bio"},{"label":"Direkt & interessant","text":"komplett neue Bio"},{"label":"Geheimnisvoll","text":"komplett neue Bio"}]}
+{"score":<ehrliche Zahl zwischen 1.0 und 10.0>,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-4 Sätze konkretes Feedback wie ein Freund es sagen würde"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":"komplett neue Bio"},{"label":"Direkt & interessant","text":"komplett neue Bio"},{"label":"Geheimnisvoll","text":"komplett neue Bio"}]}
 
 Gib 8-12 roast_items zurück. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch.`
     : `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}
 
 Gib einen kurzen ehrlichen Kommentar zu diesem Dating-Profil. Schreib wie ein Freund – locker, direkt, auf Deutsch wie man wirklich redet.
 
+WICHTIG für den Score: Sei ehrlich. Die meisten Profile liegen zwischen 3 und 7. Vergib den Score der wirklich passt – nicht immer Mitte. Schlechte Profile bekommen 2-4, gute 7-8, sehr gute 8-9.
+
 Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
-{"score":6.5,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-3 Sätze ehrliches Feedback wie ein Freund es sagen würde"}]}
+{"score":<ehrliche Zahl zwischen 1.0 und 10.0>,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-3 Sätze ehrliches Feedback wie ein Freund es sagen würde"}]}
 
 Genau 3 roast_items. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch, kein KI-Sprech.`;
 
