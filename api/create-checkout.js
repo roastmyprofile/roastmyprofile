@@ -3,7 +3,9 @@
 
 const Stripe = require('stripe');
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2023-10-16',
+});
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,9 +19,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      // automatic_payment_methods lässt Stripe alle aktivierten Methoden anzeigen
-      // inkl. Apple Pay, Google Pay, PayPal (wenn aktiviert im Dashboard)
-      automatic_payment_methods: { enabled: true },
+      payment_method_types: ['card', 'paypal'],
       customer_email: email || undefined,
       line_items: [
         {
@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
               name: '🔥 Vollständiger Roast',
               description: `Komplette KI-Analyse deines ${platform || 'Dating'}-Profils – 10+ Kritikpunkte, 3 optimierte Bios, Match-Potenzial`,
             },
-            unit_amount: 499, // 4,99€ in Cents
+            unit_amount: 499,
           },
           quantity: 1,
         },
@@ -48,7 +48,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ url: session.url });
 
   } catch (err) {
-    console.error('Stripe error:', err);
-    return res.status(500).json({ error: 'Zahlung konnte nicht gestartet werden.' });
+    console.error('Stripe error full:', err.message, err.type, err.code);
+    return res.status(500).json({ error: 'Zahlung konnte nicht gestartet werden: ' + err.message });
   }
 }
