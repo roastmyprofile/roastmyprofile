@@ -25,6 +25,10 @@ nav{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.3)}}
 .nav-cta{background:var(--fire);color:var(--cream);border:none;padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:background 0.2s;}
 .nav-cta:hover{background:var(--fire2);}
+.lang-switch{display:flex;gap:2px;border:1px solid rgba(255,255,255,0.1);}
+.lang-btn{background:transparent;color:var(--smoke);border:none;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.lang-btn.active{background:rgba(255,69,0,0.15);color:var(--cream);}
+.lang-btn:hover{color:var(--cream);}
 
 /* BUTTONS */
 .btn-hero{background:var(--fire);color:var(--cream);border:none;padding:20px 48px;font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:all 0.2s;}
@@ -370,8 +374,12 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 <nav>
   <div class="logo" onclick="showLanding()">Roast<em>My</em>Profile</div>
   <div class="nav-right">
-    <div class="nav-social-proof"><span class="nav-dot"></span><span>3.847 Profile analysiert diese Woche</span></div>
-    <button class="nav-cta" onclick="showApp()">Jetzt testen 🔥</button>
+    <div class="nav-social-proof"><span class="nav-dot"></span><span id="nav-stats">3.847 Profile analysiert diese Woche</span></div>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="lang-de" onclick="setLang('de')">🇩🇪 DE</button>
+      <button class="lang-btn" id="lang-en" onclick="setLang('en')">🇺🇸 EN</button>
+    </div>
+    <button class="nav-cta" id="nav-cta-btn" onclick="showApp()">Jetzt testen 🔥</button>
   </div>
 </nav>
 
@@ -379,46 +387,46 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 <div id="page-landing">
 
 <section class="hero">
-  <div class="hero-eyebrow">🔥 KI-Powered Dating Analyse</div>
-  <h1>Schon wieder<span class="line-fire">keine Matches?</span><span class="line-dim">Wir wissen warum.</span></h1>
-  <p class="hero-sub">Deine Freunde lügen dich an. Unsere KI nicht. <strong>RoastMyProfile</strong> analysiert dein Dating-Profil gnadenlos ehrlich – und zeigt dir in 60 Sekunden was du ändern musst.</p>
+  <div class="hero-eyebrow" id="t-eyebrow">🔥 KI-Powered Dating Analyse</div>
+  <h1 id="t-h1"><span id="t-h1-prefix">Schon wieder</span><span class="line-fire" id="t-h1-fire">keine Matches?</span><span class="line-dim" id="t-h1-dim">Wir wissen warum.</span></h1>
+  <p class="hero-sub" id="t-sub">Deine Freunde lügen dich an. Unsere KI nicht. <strong>RoastMyProfile</strong> analysiert dein Dating-Profil gnadenlos ehrlich – und zeigt dir in 60 Sekunden was du ändern musst.</p>
   <div class="hero-actions">
-    <button class="btn-hero" onclick="showApp()">🔥 Kostenlosen Roast starten</button>
-    <button class="btn-example" onclick="openExample()">👀 Beispiel ansehen</button>
-    <div class="hero-note"><span class="icon">✓</span><span>Kein Account · Kostenlos · 60 Sekunden</span></div>
+    <button class="btn-hero" onclick="showApp()" id="t-cta-main">🔥 Kostenlosen Roast starten</button>
+    <button class="btn-example" onclick="openExample()" id="t-cta-example">👀 Beispiel ansehen</button>
+    <div class="hero-note"><span class="icon">✓</span><span id="t-hero-note">Kein Account · Kostenlos · 60 Sekunden</span></div>
   </div>
   <div class="hero-stats">
-    <div><div class="stat-num">12.400+</div><div class="stat-label">Profile analysiert</div></div>
-    <div><div class="stat-num">4,8★</div><div class="stat-label">Bewertung</div></div>
-    <div><div class="stat-num">3,4×</div><div class="stat-label">Mehr Matches</div></div>
-    <div><div class="stat-num">60 Sek</div><div class="stat-label">Bis zum Roast</div></div>
+    <div><div class="stat-num">12.400+</div><div class="stat-label" id="t-stat1">Profile analysiert</div></div>
+    <div><div class="stat-num">4,8★</div><div class="stat-label" id="t-stat2">Bewertung</div></div>
+    <div><div class="stat-num">3,4×</div><div class="stat-label" id="t-stat3">Mehr Matches</div></div>
+    <div><div class="stat-num">60 Sek</div><div class="stat-label" id="t-stat4">Bis zum Roast</div></div>
   </div>
 </section>
 
 <div class="sec">
-  <div class="eyebrow">Das Problem</div>
-  <h2 class="sec-title reveal">Du swipst. Du hoffst.<br>Nichts passiert.</h2>
-  <p style="color:var(--muted);font-size:17px;max-width:520px;margin-top:12px;" class="reveal">Die meisten Dating-Profile scheitern an drei Fehlern. Und niemand sagt dir welche.</p>
+  <div class="eyebrow" id="t-pain-eyebrow">Das Problem</div>
+  <h2 class="sec-title reveal" id="t-pain-title">Du swipst. Du hoffst.<br>Nichts passiert.</h2>
+  <p style="color:var(--muted);font-size:17px;max-width:520px;margin-top:12px;" class="reveal" id="t-pain-sub">Die meisten Dating-Profile scheitern an drei Fehlern. Und niemand sagt dir welche.</p>
   <div class="pain-grid">
-    <div class="pain-card reveal"><span class="pain-icon">😶</span><div class="pain-title">Deine Bio klingt wie alle anderen</div><p class="pain-text">"Ich liebe Reisen, Sport und gutes Essen." Das schreiben 87% aller Profile. Du bist unsichtbar.</p></div>
-    <div class="pain-card reveal"><span class="pain-icon">📸</span><div class="pain-title">Deine Fotos sabotieren dich</div><p class="pain-text">Gruppenfoto als erstes Bild. Sonnenbrille. Schlechtes Licht. Jedes Foto kostet dich Swipes.</p></div>
-    <div class="pain-card reveal"><span class="pain-icon">💬</span><div class="pain-title">Kein Gesprächsanreiz</div><p class="pain-text">Wenn jemand dein Profil sieht und nicht weiß was er schreiben soll – schreibt er gar nichts.</p></div>
+    <div class="pain-card reveal"><span class="pain-icon">😶</span><div class="pain-title" id="t-pain1-title">Deine Bio klingt wie alle anderen</div><p class="pain-text" id="t-pain1-text">"Ich liebe Reisen, Sport und gutes Essen." Das schreiben 87% aller Profile. Du bist unsichtbar.</p></div>
+    <div class="pain-card reveal"><span class="pain-icon">📸</span><div class="pain-title" id="t-pain2-title">Deine Fotos sabotieren dich</div><p class="pain-text" id="t-pain2-text">Gruppenfoto als erstes Bild. Sonnenbrille. Schlechtes Licht. Jedes Foto kostet dich Swipes.</p></div>
+    <div class="pain-card reveal"><span class="pain-icon">💬</span><div class="pain-title" id="t-pain3-title">Kein Gesprächsanreiz</div><p class="pain-text" id="t-pain3-text">Wenn jemand dein Profil sieht und nicht weiß was er schreiben soll – schreibt er gar nichts.</p></div>
   </div>
 </div>
 
 <div class="sec-dark"><div class="sec-in">
-  <div class="eyebrow reveal">Echtes Beispiel</div>
-  <h2 class="sec-title reveal">So sieht ein Roast aus</h2>
+  <div class="eyebrow reveal" id="t-ex-eyebrow">Echtes Beispiel</div>
+  <h2 class="sec-title reveal" id="t-ex-title">So sieht ein Roast aus</h2>
   <div class="ex-grid reveal">
     <div class="ex-col ex-before">
-      <span class="ex-tag tag-b">Vorher – Original Bio</span>
+      <span class="ex-tag tag-b" id="t-ex-before-tag">Vorher – Original Bio</span>
       <p class="ex-bio bad">"Ich liebe es zu reisen und neue Kulturen kennenzulernen. Sport ist meine Leidenschaft und ich genieße es mit Freunden Zeit zu verbringen. Suche jemanden der das Leben genauso liebt 😊"</p>
       <div class="rpill"><span class="rpill-i">🔥</span><span class="rpill-t"><strong>Generisch bis zur Unkenntlichkeit.</strong> Jeder "liebt Reisen". Was macht dich besonders?</span></div>
       <div class="rpill"><span class="rpill-i">💀</span><span class="rpill-t"><strong>Kein Gesprächsstarter.</strong> Was soll die andere Person schreiben?</span></div>
       <div class="score-row"><div class="score-track"><div class="score-fill low"></div></div><div class="score-val low">3.4/10</div></div>
     </div>
     <div class="ex-col ex-after">
-      <span class="ex-tag tag-a">✨ Nach dem Roast</span>
+      <span class="ex-tag tag-a" id="t-ex-after-tag">✨ Nach dem Roast</span>
       <p class="ex-bio good">"Architektur tagsüber, schlechter Hobbykoch abends – meine Pasta ist eine Katastrophe aber der Versuch zählt. Letzten Monat Georgien, nächsten Monat irgendwo wo das WLAN schlecht ist. Falls du weißt was Adjara-Khachapuri ist: schreib mir sofort."</p>
       <div class="rpill ok"><span class="rpill-i">✅</span><span class="rpill-t"><strong>Sofort sympathisch.</strong> Konkreter Beruf + Selbstironie = Persönlichkeit.</span></div>
       <div class="rpill ok"><span class="rpill-i">✅</span><span class="rpill-t"><strong>Perfekter Gesprächsstarter.</strong> Läuft sofort.</span></div>
@@ -426,78 +434,78 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
     </div>
   </div>
   <div style="text-align:center;margin-top:36px;" class="reveal">
-    <button class="btn-hero" onclick="showApp()" style="display:inline-block;">🔥 Jetzt mein Profil analysieren</button>
-    <p style="font-size:13px;color:var(--smoke);margin-top:12px;">Kostenlos · Kein Konto nötig</p>
+    <button class="btn-hero" onclick="showApp()" style="display:inline-block;" id="t-ex-cta">🔥 Jetzt mein Profil analysieren</button>
+    <p style="font-size:13px;color:var(--smoke);margin-top:12px;" id="t-ex-cta-note">Kostenlos · Kein Konto nötig</p>
   </div>
 </div></div>
 
 <div class="sec">
-  <div class="eyebrow reveal">So funktioniert's</div>
-  <h2 class="sec-title reveal">3 Schritte. 60 Sekunden.<br>Mehr Matches.</h2>
+  <div class="eyebrow reveal" id="t-steps-eyebrow">So funktioniert's</div>
+  <h2 class="sec-title reveal" id="t-steps-title">3 Schritte. 60 Sekunden.<br>Mehr Matches.</h2>
   <div class="steps-row reveal">
-    <div class="step-item"><div class="step-circle">📤<div class="step-badge">1</div></div><div class="step-t">Profil hochladen</div><p class="step-p">Fotos, Bio-Text oder Screenshot – je mehr desto präziser.</p></div>
-    <div class="step-item"><div class="step-circle">🤖<div class="step-badge">2</div></div><div class="step-t">KI analysiert</div><p class="step-p">Gnadenlos ehrlich – wie ein guter Freund der nichts beschönigt.</p></div>
-    <div class="step-item"><div class="step-circle">💪<div class="step-badge">3</div></div><div class="step-t">Matches steigen</div><p class="step-p">Score + Schwachstellen + fertige Bio. Umsetzbar in 10 Minuten.</p></div>
+    <div class="step-item"><div class="step-circle">📤<div class="step-badge">1</div></div><div class="step-t" id="t-step1-t">Profil hochladen</div><p class="step-p" id="t-step1-p">Fotos, Bio-Text oder Screenshot – je mehr desto präziser.</p></div>
+    <div class="step-item"><div class="step-circle">🤖<div class="step-badge">2</div></div><div class="step-t" id="t-step2-t">KI analysiert</div><p class="step-p" id="t-step2-p">Gnadenlos ehrlich – wie ein guter Freund der nichts beschönigt.</p></div>
+    <div class="step-item"><div class="step-circle">💪<div class="step-badge">3</div></div><div class="step-t" id="t-step3-t">Matches steigen</div><p class="step-p" id="t-step3-p">Score + Schwachstellen + fertige Bio. Umsetzbar in 10 Minuten.</p></div>
   </div>
 </div>
 
 <div class="sec-dark"><div class="sec-in" style="max-width:1100px;">
-  <div class="eyebrow reveal">Was andere sagen</div>
-  <h2 class="sec-title reveal">Die Wahrheit tut weh. Und hilft.</h2>
+  <div class="eyebrow reveal" id="t-rv-eyebrow">Was andere sagen</div>
+  <h2 class="sec-title reveal" id="t-rv-title">Die Wahrheit tut weh. Und hilft.</h2>
   <div class="reviews-grid">
-    <div class="rv feat reveal"><div class="stars">★★★★★</div><div class="rv-res">📈 +340% mehr Matches</div><p class="rv-txt">"Ich dachte mein Profil ist gut. Die KI hat mich zerlegt. Hab alles umgesetzt – innerhalb einer Woche mehr Matches als in 3 Monaten zusammen."</p><div class="rv-who"><div class="rv-av" style="background:linear-gradient(135deg,#FF4500,#FF7A3D);">😎</div><div><div class="rv-name">Tobias K., 28</div><div class="rv-meta">München · Tinder</div></div></div></div>
-    <div class="rv reveal"><div class="stars">★★★★★</div><div class="rv-res">💬 Erstes Date nach 3 Tagen</div><p class="rv-txt">"Die KI hat mir erklärt warum mein Hauptfoto 40% meiner Swipes kostet. Hab es geändert – Game changer."</p><div class="rv-who"><div class="rv-av" style="background:linear-gradient(135deg,#FFB800,#FF4500);">💁‍♀️</div><div><div class="rv-name">Sarah M., 25</div><div class="rv-meta">Berlin · Bumble</div></div></div></div>
-    <div class="rv reveal"><div class="stars">★★★★★</div><div class="rv-res">🎯 Score 2,8 → 7,6</div><p class="rv-txt">"War beleidigt. Hab alles umgesetzt. Re-Check: 7,6. Die Bio hat sofort jemanden zum Schreiben gebracht."</p><div class="rv-who"><div class="rv-av" style="background:linear-gradient(135deg,#1C1209,#FF4500);">🤷‍♂️</div><div><div class="rv-name">Luca F., 31</div><div class="rv-meta">Wien · Hinge</div></div></div></div>
+    <div class="rv feat reveal"><div class="stars">★★★★★</div><div class="rv-res" id="t-rv1-res">📈 +340% mehr Matches</div><p class="rv-txt">"Ich dachte mein Profil ist gut. Die KI hat mich zerlegt. Hab alles umgesetzt – innerhalb einer Woche mehr Matches als in 3 Monaten zusammen."</p><div class="rv-who"><div class="rv-av" style="background:linear-gradient(135deg,#FF4500,#FF7A3D);">😎</div><div><div class="rv-name">Tobias K., 28</div><div class="rv-meta" id="t-rv1-meta">München · Tinder</div></div></div></div>
+    <div class="rv reveal"><div class="stars">★★★★★</div><div class="rv-res" id="t-rv2-res">💬 Erstes Date nach 3 Tagen</div><p class="rv-txt">"Die KI hat mir erklärt warum mein Hauptfoto 40% meiner Swipes kostet. Hab es geändert – Game changer."</p><div class="rv-who"><div class="rv-av" style="background:linear-gradient(135deg,#FFB800,#FF4500);">💁‍♀️</div><div><div class="rv-name">Sarah M., 25</div><div class="rv-meta" id="t-rv2-meta">Berlin · Bumble</div></div></div></div>
+    <div class="rv reveal"><div class="stars">★★★★★</div><div class="rv-res" id="t-rv3-res">🎯 Score 2,8 → 7,6</div><p class="rv-txt">"War beleidigt. Hab alles umgesetzt. Re-Check: 7,6. Die Bio hat sofort jemanden zum Schreiben gebracht."</p><div class="rv-who"><div class="rv-av" style="background:linear-gradient(135deg,#1C1209,#FF4500);">🤷‍♂️</div><div><div class="rv-name">Luca F., 31</div><div class="rv-meta" id="t-rv3-meta">Wien · Hinge</div></div></div></div>
   </div>
   <div class="rv-big reveal">
     <div class="stars">★★★★★</div>
     <p class="rv-txt">"Ich hab 4,99€ ausgegeben und bin seit 3 Monaten in einer Beziehung. Die KI hat mir in 60 Sekunden erklärt was mir kein Mensch in 2 Jahren Online-Dating gesagt hat."</p>
-    <div class="rv-who" style="margin-top:18px;"><div class="rv-av" style="background:linear-gradient(135deg,#FF4500,#FFB800);width:40px;height:40px;font-size:18px;">🥹</div><div><div class="rv-name">Jonas W., 34</div><div class="rv-meta">Hamburg · Tinder · jetzt vergeben</div></div></div>
+    <div class="rv-who" style="margin-top:18px;"><div class="rv-av" style="background:linear-gradient(135deg,#FF4500,#FFB800);width:40px;height:40px;font-size:18px;">🥹</div><div><div class="rv-name">Jonas W., 34</div><div class="rv-meta" id="t-rv-big-meta">Hamburg · Tinder · jetzt vergeben</div></div></div>
   </div>
 </div></div>
 
 <div class="sec" style="text-align:center;">
-  <div class="eyebrow reveal">Preise</div>
-  <h2 class="sec-title reveal">Transparent. Einmalig. Fair.</h2>
+  <div class="eyebrow reveal" id="t-price-eyebrow">Preise</div>
+  <h2 class="sec-title reveal" id="t-price-title">Transparent. Einmalig. Fair.</h2>
   <div class="pricing-grid">
-    <div class="pc reveal"><div class="pc-lbl">Kostenlos</div><div class="pc-price"><sup>€</sup>0</div><div class="pc-period">Kein Konto · Sofort</div><p class="pc-desc">Schnuppere rein – kein Risiko, keine Kreditkarte.</p><ul class="feat-list"><li><span class="fc">✓</span>3 Kritikpunkte</li><li><span class="fc">✓</span>Gesamt Match-Score</li><li><span class="fx fm">✗</span><span class="fm">Foto-Analyse</span></li><li><span class="fx fm">✗</span><span class="fm">Optimierte Bios</span></li><li><span class="fx fm">✗</span><span class="fm">Verbesserungsplan</span></li></ul><button class="btn-ghost" onclick="showApp()">Kostenlos starten</button></div>
-    <div class="pc feat reveal"><div class="pc-pop">⚡ Beliebteste Wahl</div><div class="pc-lbl">Voller Roast</div><div class="pc-price"><sup>€</sup>4<span class="cents">,99</span></div><div class="pc-period">Einmalig · Kein Abo</div><p class="pc-desc">Alles was du brauchst – einmalig, kein Abo.</p><ul class="feat-list"><li><span class="fc">✓</span><strong>10+ Kritikpunkte</strong></li><li><span class="fc">✓</span>Detaillierte Foto-Analyse</li><li><span class="fc">✓</span><strong>3 optimierte Bios</strong></li><li><span class="fc">✓</span>Verbesserungsplan</li><li><span class="fc">✓</span>Match-Potenzial</li></ul><button class="btn-fire" onclick="showApp()">🔥 Freischalten – 4,99 €</button></div>
+    <div class="pc reveal"><div class="pc-lbl" id="t-free-lbl">Kostenlos</div><div class="pc-price"><sup>€</sup>0</div><div class="pc-period" id="t-free-period">Kein Konto · Sofort</div><p class="pc-desc" id="t-free-desc">Schnuppere rein – kein Risiko, keine Kreditkarte.</p><ul class="feat-list"><li><span class="fc">✓</span>3 Kritikpunkte</li><li><span class="fc">✓</span>Gesamt Match-Score</li><li><span class="fx fm">✗</span><span class="fm">Foto-Analyse</span></li><li><span class="fx fm">✗</span><span class="fm">Optimierte Bios</span></li><li><span class="fx fm">✗</span><span class="fm">Verbesserungsplan</span></li></ul><button class="btn-ghost" onclick="showApp()" id="t-free-btn">Kostenlos starten</button></div>
+    <div class="pc feat reveal"><div class="pc-pop" id="t-paid-pop">⚡ Beliebteste Wahl</div><div class="pc-lbl" id="t-paid-lbl">Voller Roast</div><div class="pc-price"><sup>€</sup>4<span class="cents">,99</span></div><div class="pc-period" id="t-paid-period">Einmalig · Kein Abo</div><p class="pc-desc" id="t-paid-desc">Alles was du brauchst – einmalig, kein Abo.</p><ul class="feat-list"><li><span class="fc">✓</span><strong>10+ Kritikpunkte</strong></li><li><span class="fc">✓</span>Detaillierte Foto-Analyse</li><li><span class="fc">✓</span><strong>3 optimierte Bios</strong></li><li><span class="fc">✓</span>Verbesserungsplan</li><li><span class="fc">✓</span>Match-Potenzial</li></ul><button class="btn-fire" onclick="showApp()" id="t-paid-btn">🔥 Freischalten – 4,99 €</button></div>
   </div>
-  <p class="pricing-note reveal">💡 Ein echter Dating-Coach kostet <strong>80–150 € / Stunde</strong>. Du bekommst dasselbe – in 60 Sek, für 4,99 €.</p>
+  <p class="pricing-note reveal" id="t-price-note">💡 Ein echter Dating-Coach kostet <strong>80–150 € / Stunde</strong>. Du bekommst dasselbe – in 60 Sek, für 4,99 €.</p>
 </div>
 
 <div class="faq-wrap">
-  <div class="eyebrow reveal">FAQ</div>
-  <h2 class="sec-title reveal">Deine Fragen.<br>Ehrliche Antworten.</h2>
+  <div class="eyebrow reveal" id="t-faq-eyebrow">FAQ</div>
+  <h2 class="sec-title reveal" id="t-faq-title">Deine Fragen.<br>Ehrliche Antworten.</h2>
   <div style="margin-top:36px;" class="reveal">
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Wie funktioniert die Analyse genau?<span class="faq-arrow">+</span></button><div class="faq-a">Du lädst Fotos, Bio-Text oder Screenshots hoch. Unsere KI analysiert alles gründlich – konkretes, individuelles Feedback auf Deutsch.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Sind meine Fotos und Daten sicher?<span class="faq-arrow">+</span></button><div class="faq-a">Ja. Deine Daten werden nur für die Analyse verwendet und nicht dauerhaft gespeichert. DSGVO-konform.</div></div>
-    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Was wenn ich nicht zufrieden bin?<span class="faq-arrow">+</span></button><div class="faq-a">100% Geld-zurück-Garantie innerhalb von 24 Stunden – kein Wenn und Aber. Einfach eine Mail an contact@roastmyprofile.app.</div></div>
+    <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Was wenn ich nicht zufrieden bin?<span class="faq-arrow">+</span></button><div class="faq-a">100% Geld-zurück-Garantie innerhalb von 24 Stunden – kein Wenn und Aber. Einfach eine Mail an <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="37545859435654437745585644435a4e474558515e5b5219564747">[email&#160;protected]</a>.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Für welche Dating-Apps funktioniert das?<span class="faq-arrow">+</span></button><div class="faq-a">Tinder, Bumble, Hinge, OkCupid, Lovoo, Badoo und mehr. Die Analyse passt sich an die Plattform an.</div></div>
     <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Wie schnell sehe ich Ergebnisse?<span class="faq-arrow">+</span></button><div class="faq-a">Die meisten Nutzer berichten von spürbaren Verbesserungen innerhalb von 24–48 Stunden nach der Profiloptimierung.</div></div>
   </div>
 </div>
 
 <div class="final-cta">
-  <h2>Noch ein Tag ohne<br><span style="color:var(--fire)">Matches verschwenden?</span></h2>
-  <p>4,99 € für einen vollständigen Roast. Oder weiter hoffen.</p>
-  <button class="btn-hero" onclick="showApp()" style="margin:0 auto;display:block;">🔥 Kostenlosen Roast starten</button>
+  <h2 id="t-final-h2">Noch ein Tag ohne<br><span style="color:var(--fire)" id="t-final-fire">Matches verschwenden?</span></h2>
+  <p id="t-final-p">4,99 € für einen vollständigen Roast. Oder weiter hoffen.</p>
+  <button class="btn-hero" onclick="showApp()" style="margin:0 auto;display:block;" id="t-final-btn">🔥 Kostenlosen Roast starten</button>
   <div class="trust-row">
-    <div class="trust-item"><span class="trust-icon">✓</span>DSGVO-konform</div>
-    <div class="trust-item"><span class="trust-icon">✓</span>Keine Datenspeicherung</div>
-    <div class="trust-item"><span class="trust-icon">✓</span>Stripe-Zahlung</div>
-    <div class="trust-item"><span class="trust-icon">✓</span>24h Geld-zurück</div>
-    <div class="trust-item"><span class="trust-icon">✓</span>Kein Abo</div>
+    <div class="trust-item"><span class="trust-icon">✓</span><span id="t-trust1">DSGVO-konform</span></div>
+    <div class="trust-item"><span class="trust-icon">✓</span><span id="t-trust2">Keine Datenspeicherung</span></div>
+    <div class="trust-item"><span class="trust-icon">✓</span><span id="t-trust3">Stripe-Zahlung</span></div>
+    <div class="trust-item"><span class="trust-icon">✓</span><span id="t-trust4">24h Money-Back</span></div>
+    <div class="trust-item"><span class="trust-icon">✓</span><span id="t-trust5">Kein Abo</span></div>
   </div>
 </div>
 
 <footer>
   <div class="logo" style="font-size:20px;" onclick="showLanding()">Roast<em>My</em>Profile</div>
   <div class="footer-links">
-    <a href="#" onclick="event.preventDefault();openLegal('impressum')">Impressum</a>
-    <a href="#" onclick="event.preventDefault();openLegal('datenschutz')">Datenschutz</a>
-    <a href="#" onclick="event.preventDefault();openLegal('agb')">AGB</a>
-    <a href="#" onclick="event.preventDefault();openKontakt()">Kontakt</a>
+    <a href="#" onclick="event.preventDefault();openLegal('impressum')" id="t-footer-impressum">Impressum</a>
+    <a href="#" onclick="event.preventDefault();openLegal('datenschutz')" id="t-footer-privacy">Datenschutz</a>
+    <a href="#" onclick="event.preventDefault();openLegal('agb')" id="t-footer-agb">AGB</a>
+    <a href="#" onclick="event.preventDefault();openKontakt()" id="t-footer-contact">Kontakt</a>
   </div>
   <div>© 2025 RoastMyProfile · Dennis Reinhardt</div>
 </footer>
@@ -508,18 +516,18 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 <div id="page-app">
 <div class="app-inner">
   <div class="app-topbar">
-    <button class="back-btn" onclick="showLanding()">← Zurück zur Startseite</button>
-    <div class="app-badge">🔥 KI-Analyse</div>
+    <button class="back-btn" onclick="showLanding()" id="t-back-btn">← Zurück zur Startseite</button>
+    <div class="app-badge" id="t-app-badge">🔥 KI-Analyse</div>
   </div>
 
   <!-- UPLOAD -->
   <div class="ascreen on" id="ascreen-upload">
-    <div class="app-eyebrow" style="margin-top:28px;">🔥 Ehrliches KI-Feedback</div>
-    <h1 class="app-h1">Dein Profil<span class="fire-line">kriegt die Wahrheit.</span></h1>
-    <p class="app-sub">Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.</p>
+    <div class="app-eyebrow" id="t-app-eyebrow" style="margin-top:28px;">🔥 Ehrliches KI-Feedback</div>
+    <h1 class="app-h1" id="t-app-h1">Dein Profil<span class="fire-line" id="t-app-h1-fire">kriegt die Wahrheit.</span></h1>
+    <p class="app-sub" id="t-app-sub">Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.</p>
     <input type="hidden" id="api-key-inp" value="">
     <div id="err-box" class="err-box"></div>
-    <div class="plat-label">Welche Plattform?</div>
+    <div class="plat-label" id="t-plat-label">Welche Plattform?</div>
     <div class="plat-row">
       <button class="plat-btn on" data-p="Tinder" onclick="setPlatform(this)">🔥 Tinder</button>
       <button class="plat-btn" data-p="Bumble" onclick="setPlatform(this)">🐝 Bumble</button>
@@ -527,21 +535,21 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
       <button class="plat-btn" data-p="OkCupid" onclick="setPlatform(this)">💬 OkCupid</button>
       <button class="plat-btn" data-p="Sonstige" onclick="setPlatform(this)">✨ Sonstige</button>
     </div>
-    <div class="up-label">Profilfotos &amp; Screenshot (optional)</div>
+    <div class="up-label" id="t-up-label">Profilfotos &amp; Screenshot (optional)</div>
     <div class="up-zone" id="up-zone">
       <input type="file" id="file-inp" multiple accept="image/*" onchange="handleFiles(this.files)">
       <span class="up-icon">📸</span>
-      <h3>Fotos hier ablegen oder klicken</h3>
-      <p>Profilfotos oder Screenshot – je mehr desto besser</p>
+      <h3 id="t-up-h3">Fotos hier ablegen oder klicken</h3>
+      <p id="t-up-p">Profilfotos oder Screenshot – je mehr desto besser</p>
       <div id="prev-grid" class="prev-grid"></div>
     </div>
-    <label class="bio-label" for="bio-inp">Deine Bio / Profiltext *</label>
+    <label class="bio-label" id="t-bio-label" for="bio-inp">Deine Bio / Profiltext *</label>
     <textarea id="bio-inp" placeholder='Füge deinen Bio-Text ein. Beispiel: "Ich liebe Reisen, Sport und meine Hunde 🐶"' rows="5"></textarea>
     <button class="btn-start" id="start-btn" onclick="startRoast()">🔥 Kostenlosen Roast starten</button>
-    <p class="hint-txt">Kostenlos: 3 Kritikpunkte + Score · Kein Konto nötig</p>
-    <div class="divider-or"><span>oder</span></div>
-    <button class="btn-direct-buy" onclick="openModal()">💳 Direkt vollen Roast kaufen – 4,99 €</button>
-    <p class="hint-txt">10+ Kritikpunkte · 3 optimierte Bios · Einmalzahlung</p>
+    <p class="hint-txt" id="t-start-hint">Kostenlos: 3 Kritikpunkte + Score · Kein Konto nötig</p>
+    <div class="divider-or"><span id="t-or">oder</span></div>
+    <button class="btn-direct-buy" id="t-direct-buy" onclick="openModal()">💳 Direkt vollen Roast kaufen – 4,99 €</button>
+    <p class="hint-txt" id="t-direct-hint">10+ Kritikpunkte · 3 optimierte Bios · Einmalzahlung</p>
   </div>
 
   <!-- LOADING -->
@@ -675,7 +683,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
       <h3>Angaben gemäß § 5 TMG</h3>
       <p>Dennis Reinhardt<br>Altenberger Str. 81<br>01277 Dresden<br>Deutschland</p>
       <h3>Kontakt</h3>
-      <p>E-Mail: <a href="mailto:contact@roastmyprofile.app">contact@roastmyprofile.app</a></p>
+      <p>E-Mail: <a href="/cdn-cgi/l/email-protection#93f0fcfde7f2f0e7d3e1fcf2e0e7feeae3e1fcf5fafff6bdf2e3e3"><span class="__cf_email__" data-cfemail="53303c3d2732302713213c3220273e2a23213c353a3f367d322323">[email&#160;protected]</span></a></p>
       <h3>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
       <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden</p>
       <h3>EU-Streitschlichtung</h3>
@@ -685,7 +693,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
     <div id="lp-datenschutz" class="hide">
       <h2>Datenschutzerklärung</h2>
       <h3>1. Verantwortlicher</h3>
-      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden · contact@roastmyprofile.app</p>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="50333f3e2431332410223f3123243d2920223f36393c357e312020">[email&#160;protected]</a></p>
       <h3>2. Erhobene Daten</h3>
       <ul>
         <li>Hochgeladene Profilfotos und Bio-Texte (nur zur Analyse, danach gelöscht)</li>
@@ -697,13 +705,13 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
       <h3>4. Drittanbieter</h3>
       <p><strong>Stripe:</strong> Zahlungsabwicklung (stripe.com/privacy)<br><strong>Resend:</strong> E-Mail-Versand (resend.com/legal/privacy-policy)<br><strong>Plausible:</strong> Cookie-freie Webanalyse (plausible.io/privacy)<br><strong>Vercel:</strong> Hosting (vercel.com/legal/privacy-policy)</p>
       <h3>5. Deine Rechte</h3>
-      <p>Auskunft, Berichtigung, Löschung: contact@roastmyprofile.app</p>
+      <p>Auskunft, Berichtigung, Löschung: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80e3efeef4e1e3f4c0f2efe1f3f4edf9f0f2efe6e9ece5aee1f0f0">[email&#160;protected]</a></p>
     </div>
 
     <div id="lp-agb" class="hide">
       <h2>Allgemeine Geschäftsbedingungen</h2>
       <h3>1. Anbieter</h3>
-      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, contact@roastmyprofile.app</p>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="492a26273d282a3d093b26283a3d2430393b262f20252c67283939">[email&#160;protected]</a></p>
       <h3>2. Leistung</h3>
       <p>RoastMyProfile bietet KI-gestützte Analyse von Dating-Profilen. Kostenlos: 3 Kritikpunkte + Score. Vollversion (4,99 €): 10+ Kritikpunkte, Foto-Analyse, 3 optimierte Bios.</p>
       <h3>3. Zahlung</h3>
@@ -711,7 +719,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
       <h3>4. Widerrufsrecht</h3>
       <p>Da es sich um digitale Inhalte handelt die sofort geliefert werden, erlischt das Widerrufsrecht mit Beginn der Ausführung, wenn du ausdrücklich zugestimmt hast und deine Kenntnis vom Erlöschen bestätigt hast.</p>
       <h3>5. Freiwillige Geld-zurück-Garantie</h3>
-      <p>Bei Unzufriedenheit innerhalb von 24 Stunden erstatten wir den vollen Betrag. Kontakt: contact@roastmyprofile.app</p>
+      <p>Bei Unzufriedenheit innerhalb von 24 Stunden erstatten wir den vollen Betrag. Kontakt: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d2b1bdbca6b3b1a692a0bdb3a1a6bfaba2a0bdb4bbbeb7fcb3a2a2">[email&#160;protected]</a></p>
       <h3>6. Haftung</h3>
       <p>Die Analyse dient zur Unterhaltung und Inspiration. Keine Garantie auf bestimmte Ergebnisse. Haftung begrenzt auf Kaufpreis.</p>
       <h3>7. Recht</h3>
@@ -752,7 +760,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
         <textarea id="k-message" placeholder="Wie können wir dir helfen?"></textarea>
       </div>
       <button class="kontakt-submit" id="k-submit" onclick="sendKontakt()">📨 Nachricht senden</button>
-      <p style="font-size:11px;color:var(--smoke);margin-top:12px;text-align:center;">Oder direkt: <a href="mailto:contact@roastmyprofile.app" style="color:var(--fire);">contact@roastmyprofile.app</a></p>
+      <p style="font-size:11px;color:var(--smoke);margin-top:12px;text-align:center;">Oder direkt: <a href="/cdn-cgi/l/email-protection#55363a3b2134362115273a342621382c25273a333c39307b342525" style="color:var(--fire);"><span class="__cf_email__" data-cfemail="52313d3c2633312612203d3321263f2b22203d343b3e377c332222">[email&#160;protected]</span></a></p>
     </div>
     <div id="kontakt-success" class="kontakt-success" style="display:none;">
       <div class="k-icon">✅</div>
@@ -770,7 +778,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 
 </div><!-- /wrap -->
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Alle Initialisierungen nach DOM-Laden
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -778,6 +786,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!localStorage.getItem('dsgvo_ok')) {
     document.getElementById('dsgvo-banner').classList.remove('hide');
   }
+
+  // ── LANGUAGE INIT ──
+  applyLang();
 
   // ── DRAG & DROP ──
   const uz = document.getElementById('up-zone');
@@ -1077,21 +1088,183 @@ async function sendKontakt() {
   const email = document.getElementById('k-email').value.trim();
   const subject = document.getElementById('k-subject').value;
   const message = document.getElementById('k-message').value.trim();
-  if(!name||!email||!subject||!message){alert('Bitte alle Felder ausfüllen.');return;}
+  if(!name||!email||!subject||!message){alert(currentLang==='de'?'Bitte alle Felder ausfüllen.':'Please fill in all fields.');return;}
   const btn = document.getElementById('k-submit');
-  btn.disabled=true; btn.textContent='⏳ Wird gesendet...';
+  btn.disabled=true; btn.textContent='⏳...';
   try {
-    await fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,platform:'Kontaktformular',roastData:{score:0,headline:`Kontakt: ${subject}`,roast_items:[{emoji:'✉️',category:'Nachricht',severity:'niedrig',text:message}],bio_versions:[]}})});
+    await fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,platform:'Contact Form',roastData:{score:0,headline:`Contact: ${subject}`,roast_items:[{emoji:'✉️',category:'Message',severity:'niedrig',text:message}],bio_versions:[]}})});
   } catch(e){}
   document.getElementById('kontakt-form-wrap').style.display='none';
   document.getElementById('kontakt-success').style.display='block';
-  btn.disabled=false; btn.textContent='📨 Nachricht senden';
+  btn.disabled=false; btn.textContent='📨 ' + (currentLang==='de'?'Nachricht senden':'Send message');
 }
 
 // ── DSGVO ──
 function acceptDsgvo() {
   document.getElementById('dsgvo-banner').classList.add('hide');
   localStorage.setItem('dsgvo_ok','1');
+}
+
+// ── LANGUAGE SWITCHER ──
+const T = {
+  de: {
+    navStats: "3.847 Profile analysiert diese Woche", navCta: "Jetzt testen 🔥",
+    eyebrow: "🔥 KI-Powered Dating Analyse", h1Prefix: "Schon wieder", h1Fire: "keine Matches?", h1Dim: "Wir wissen warum.",
+    sub: "Deine Freunde lügen dich an. Unsere KI nicht. <strong>RoastMyProfile</strong> analysiert dein Dating-Profil gnadenlos ehrlich – und zeigt dir in 60 Sekunden was du ändern musst.",
+    ctaMain: "🔥 Kostenlosen Roast starten", ctaExample: "👀 Beispiel ansehen",
+    heroNote: "Kein Account · Kostenlos · 60 Sekunden",
+    stat1: "Profile analysiert", stat2: "Bewertung", stat3: "Mehr Matches", stat4: "Bis zum Roast",
+    painEyebrow: "Das Problem", painTitle: "Du swipst. Du hoffst.<br>Nichts passiert.",
+    painSub: "Die meisten Dating-Profile scheitern an drei Fehlern. Und niemand sagt dir welche.",
+    pain1Title: "Deine Bio klingt wie alle anderen", pain1Text: "87% aller Profile schreiben dasselbe. Du bist unsichtbar.",
+    pain2Title: "Deine Fotos sabotieren dich", pain2Text: "Gruppenfoto als erstes Bild. Sonnenbrille. Schlechtes Licht. Jedes Foto kostet dich Swipes.",
+    pain3Title: "Kein Gesprächsanreiz", pain3Text: "Wenn jemand dein Profil sieht und nichts zu schreiben findet – schreibt er gar nichts.",
+    exEyebrow: "Echtes Beispiel", exTitle: "So sieht ein Roast aus",
+    exBeforeTag: "Vorher – Original Bio", exAfterTag: "✨ Nach dem Roast",
+    exCta: "🔥 Jetzt mein Profil analysieren", exCtaNote: "Kostenlos · Kein Konto nötig",
+    stepsEyebrow: "So funktioniert es", stepsTitle: "3 Schritte. 60 Sekunden.<br>Mehr Matches.",
+    step1T: "Profil hochladen", step1P: "Fotos, Bio-Text oder Screenshot – je mehr desto präziser.",
+    step2T: "KI analysiert", step2P: "Gnadenlos ehrlich – wie ein guter Freund der nichts beschönigt.",
+    step3T: "Matches steigen", step3P: "Score + Schwachstellen + fertige Bio. Umsetzbar in 10 Minuten.",
+    rvEyebrow: "Was andere sagen", rvTitle: "Die Wahrheit tut weh. Und hilft.",
+    rv1Res: "📈 +340% mehr Matches", rv1Txt: "Ich dachte mein Profil ist gut. Die KI hat mich zerlegt. Innerhalb einer Woche mehr Matches als in 3 Monaten zusammen.", rv1Meta: "München · Tinder",
+    rv2Res: "💬 Erstes Date nach 3 Tagen", rv2Txt: "Die KI hat mir erklärt warum mein Hauptfoto 40% meiner Swipes kostet. Hab es geändert – Game changer.", rv2Meta: "Berlin · Bumble",
+    rv3Res: "🎯 Score 2,8 → 7,6", rv3Txt: "War beleidigt. Hab alles umgesetzt. Re-Check: 7,6. Die Bio hat sofort jemanden zum Schreiben gebracht.", rv3Meta: "Wien · Hinge",
+    rvBig: "Ich hab 4,99€ ausgegeben und bin seit 3 Monaten in einer Beziehung. Die KI hat mir in 60 Sekunden erklärt was mir kein Mensch in 2 Jahren gesagt hat.", rvBigMeta: "Hamburg · Tinder · jetzt vergeben",
+    priceEyebrow: "Preise", priceTitle: "Transparent. Einmalig. Fair.",
+    freeLbl: "Kostenlos", freePeriod: "Kein Konto · Sofort", freeDesc: "Schnuppere rein – kein Risiko, keine Kreditkarte.",
+    freeF1: "3 Kritikpunkte", freeF2: "Gesamt Match-Score", freeF3: "Foto-Analyse", freeF4: "Optimierte Bios", freeF5: "Verbesserungsplan", freeBtn: "Kostenlos starten",
+    paidPop: "⚡ Beliebteste Wahl", paidLbl: "Voller Roast", paidPeriod: "Einmalig · Kein Abo", paidDesc: "Alles was du brauchst – einmalig, kein Abo.",
+    paidF1: "10+ Kritikpunkte", paidF2: "Detaillierte Foto-Analyse", paidF3: "3 optimierte Bios", paidF4: "Verbesserungsplan", paidF5: "Match-Potenzial",
+    paidBtn: "🔥 Freischalten – 4,99 €", priceNote: "💡 Ein echter Dating-Coach kostet <strong>80–150 € / Stunde</strong>. Du bekommst dasselbe – in 60 Sek, für 4,99 €.",
+    faqEyebrow: "FAQ", faqTitle: "Deine Fragen.<br>Ehrliche Antworten.",
+    finalH2: "Noch ein Tag ohne", finalFire: "Matches verschwenden?", finalP: "4,99 € für einen vollständigen Roast. Oder weiter hoffen.", finalBtn: "🔥 Kostenlosen Roast starten",
+    trust1: "DSGVO-konform", trust2: "Keine Datenspeicherung", trust3: "Stripe-Zahlung", trust4: "24h Geld-zurück", trust5: "Kein Abo",
+    footerImpressum: "Impressum", footerPrivacy: "Datenschutz", footerAgb: "AGB", footerContact: "Kontakt",
+    backBtn: "← Zurück zur Startseite", appBadge: "🔥 KI-Analyse",
+    appEyebrow: "🔥 Ehrliches KI-Feedback", appH1Fire: "kriegt die Wahrheit.",
+    appSub: "Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.",
+    platLabel: "Welche Plattform?", upLabel: "Profilfotos & Screenshot (optional)",
+    upH3: "Fotos hier ablegen oder klicken", upP: "Profilfotos oder Screenshot – je mehr desto besser",
+    bioLabel: "Deine Bio / Profiltext *", bioPH: "Füge deinen Bio-Text ein. Beispiel: Ich liebe Reisen, Sport und meine Hunde",
+    startBtn: "🔥 Kostenlosen Roast starten", startHint: "Kostenlos: 3 Kritikpunkte + Score · Kein Konto nötig",
+    orLabel: "oder", directBuy: "💳 Direkt vollen Roast kaufen – 4,99 €",
+    directHint: "10+ Kritikpunkte · 3 optimierte Bios · Einmalzahlung"
+  },
+  en: {
+    navStats: "3,847 profiles analyzed this week", navCta: "Try it free 🔥",
+    eyebrow: "🔥 AI-Powered Dating Analysis", h1Prefix: "", h1Fire: "Still Getting Ghosted?", h1Dim: "We Know Why.",
+    sub: "Your friends won't tell you the truth. Our AI will. <strong>RoastMyProfile</strong> gives you brutally honest feedback on your dating profile – and shows you exactly what to fix in 60 seconds.",
+    ctaMain: "🔥 Get my free roast", ctaExample: "👀 See an example",
+    heroNote: "No account · Free · 60 seconds",
+    stat1: "Profiles analyzed", stat2: "Rating", stat3: "More matches", stat4: "Time to roast",
+    painEyebrow: "The Problem", painTitle: "You swipe. You hope.<br>Nothing happens.",
+    painSub: "Most dating profiles fail for the same three reasons. And nobody tells you which.",
+    pain1Title: "Your bio sounds like everyone else", pain1Text: "87% of profiles say the same thing. You are invisible.",
+    pain2Title: "Your photos are sabotaging you", pain2Text: "Group photo first. Sunglasses. Bad lighting. Every photo is costing you matches.",
+    pain3Title: "Nothing to talk about", pain3Text: "If someone sees your profile and has nothing to say – they say nothing.",
+    exEyebrow: "Real Example", exTitle: "This is what a roast looks like",
+    exBeforeTag: "Before – Original Bio", exAfterTag: "✨ After the Roast",
+    exCta: "🔥 Analyze my profile now", exCtaNote: "Free · No account needed",
+    stepsEyebrow: "How it works", stepsTitle: "3 steps. 60 seconds.<br>More matches.",
+    step1T: "Upload your profile", step1P: "Photos, bio text or screenshots – the more the better.",
+    step2T: "AI analyzes", step2P: "Brutally honest – like a good friend who tells it like it is.",
+    step3T: "Matches go up", step3P: "Score + weak spots + ready-to-use bio. Done in 10 minutes.",
+    rvEyebrow: "What others say", rvTitle: "The truth hurts. And helps.",
+    rv1Res: "📈 +340% more matches", rv1Txt: "I thought my profile was good. The AI destroyed it. More matches in one week than in 3 months combined.", rv1Meta: "Munich · Tinder",
+    rv2Res: "💬 First date in 3 days", rv2Txt: "The AI told me why my main photo was costing me 40% of my swipes. Changed it – total game changer.", rv2Meta: "Berlin · Bumble",
+    rv3Res: "🎯 Score 2.8 → 7.6", rv3Txt: "I was offended. Made all the changes. Re-check: 7.6. The new bio got someone writing immediately.", rv3Meta: "Vienna · Hinge",
+    rvBig: "I spent 4.99 euros and have been in a relationship for 3 months. The AI told me in 60 seconds what no person had told me in 2 years of online dating.", rvBigMeta: "Hamburg · Tinder · now taken",
+    priceEyebrow: "Pricing", priceTitle: "Transparent. One-time. Fair.",
+    freeLbl: "Free", freePeriod: "No account · Instant", freeDesc: "Try it out – no risk, no credit card.",
+    freeF1: "3 feedback points", freeF2: "Overall match score", freeF3: "Photo analysis", freeF4: "Optimized bios", freeF5: "Improvement plan", freeBtn: "Start for free",
+    paidPop: "⚡ Most popular", paidLbl: "Full Roast", paidPeriod: "One-time · No subscription", paidDesc: "Everything you need – one payment, no subscription.",
+    paidF1: "10+ feedback points", paidF2: "Detailed photo analysis", paidF3: "3 optimized bios", paidF4: "Improvement plan", paidF5: "Match potential",
+    paidBtn: "🔥 Unlock – 4.99 EUR", priceNote: "💡 A real dating coach costs <strong>80-150 USD per hour</strong>. You get the same thing – in 60 sec, for 4.99 EUR.",
+    faqEyebrow: "FAQ", faqTitle: "Your questions.<br>Honest answers.",
+    finalH2: "Wasting another day with", finalFire: "zero matches?", finalP: "4.99 EUR for a full roast. Or keep hoping.", finalBtn: "🔥 Get my free roast",
+    trust1: "GDPR compliant", trust2: "No data stored", trust3: "Stripe payment", trust4: "24h money-back", trust5: "No subscription",
+    footerImpressum: "Legal notice", footerPrivacy: "Privacy", footerAgb: "Terms", footerContact: "Contact",
+    backBtn: "← Back to home", appBadge: "🔥 AI Analysis",
+    appEyebrow: "🔥 Brutally honest AI feedback", appH1Fire: "gets the truth.",
+    appSub: "Upload your profile – our AI tells you exactly why you are not getting matches.",
+    platLabel: "Which platform?", upLabel: "Profile photos and screenshots (optional)",
+    upH3: "Drop photos here or click", upP: "Profile photos or screenshots – the more the better",
+    bioLabel: "Your bio / profile text", bioPH: "Paste your bio here. Example: Love hiking, good food and my dog",
+    startBtn: "🔥 Get my free roast", startHint: "Free: 3 feedback points + score · No account needed",
+    orLabel: "or", directBuy: "💳 Get full roast now – 4.99 EUR",
+    directHint: "10+ feedback points · 3 optimized bios · One-time payment"
+  }
+};
+let currentLang = localStorage.getItem('rmp_lang') || (navigator.language.startsWith('de') ? 'de' : 'en');
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('rmp_lang', lang);
+  applyLang();
+}
+
+function applyLang() {
+  const t = T[currentLang];
+  const $ = id => document.getElementById(id);
+  document.getElementById('lang-de').classList.toggle('active', currentLang==='de');
+  document.getElementById('lang-en').classList.toggle('active', currentLang==='en');
+  document.documentElement.lang = currentLang;
+  const setText = (id, val) => { const el=$(id); if(el) el.textContent=val; };
+  const setHTML = (id, val) => { const el=$(id); if(el) el.innerHTML=val; };
+  // Nav + Hero
+  setText('nav-stats', t.navStats); setText('nav-cta-btn', t.navCta);
+  setText('t-eyebrow', t.eyebrow); setText('t-h1-prefix', t.h1Prefix);
+  setText('t-h1-fire', t.h1Fire); setText('t-h1-dim', t.h1Dim);
+  setHTML('t-sub', t.sub);
+  setText('t-cta-main', t.ctaMain); setText('t-cta-example', t.ctaExample);
+  setText('t-hero-note', t.heroNote);
+  setText('t-stat1', t.stat1); setText('t-stat2', t.stat2); setText('t-stat3', t.stat3); setText('t-stat4', t.stat4);
+  // Pain section
+  setText('t-pain-eyebrow', t.painEyebrow); setHTML('t-pain-title', t.painTitle); setText('t-pain-sub', t.painSub);
+  setText('t-pain1-title', t.pain1Title); setText('t-pain1-text', t.pain1Text);
+  setText('t-pain2-title', t.pain2Title); setText('t-pain2-text', t.pain2Text);
+  setText('t-pain3-title', t.pain3Title); setText('t-pain3-text', t.pain3Text);
+  // Example
+  setText('t-ex-eyebrow', t.exEyebrow); setText('t-ex-title', t.exTitle);
+  setText('t-ex-before-tag', t.exBeforeTag); setText('t-ex-after-tag', t.exAfterTag);
+  setText('t-ex-cta', t.exCta); setText('t-ex-cta-note', t.exCtaNote);
+  // Steps
+  setText('t-steps-eyebrow', t.stepsEyebrow); setHTML('t-steps-title', t.stepsTitle);
+  setText('t-step1-t', t.step1T); setText('t-step1-p', t.step1P);
+  setText('t-step2-t', t.step2T); setText('t-step2-p', t.step2P);
+  setText('t-step3-t', t.step3T); setText('t-step3-p', t.step3P);
+  // Reviews
+  setText('t-rv-eyebrow', t.rvEyebrow); setText('t-rv-title', t.rvTitle);
+  setText('t-rv1-res', t.rv1Res); setText('t-rv1-txt', t.rv1Txt); setText('t-rv1-meta', t.rv1Meta);
+  setText('t-rv2-res', t.rv2Res); setText('t-rv2-txt', t.rv2Txt); setText('t-rv2-meta', t.rv2Meta);
+  setText('t-rv3-res', t.rv3Res); setText('t-rv3-txt', t.rv3Txt); setText('t-rv3-meta', t.rv3Meta);
+  setText('t-rv-big', t.rvBig); setText('t-rv-big-meta', t.rvBigMeta);
+  // Pricing
+  setText('t-price-eyebrow', t.priceEyebrow); setText('t-price-title', t.priceTitle);
+  setText('t-free-lbl', t.freeLbl); setText('t-free-period', t.freePeriod); setText('t-free-desc', t.freeDesc);
+  setText('t-free-btn', t.freeBtn);
+  setText('t-paid-pop', t.paidPop); setText('t-paid-lbl', t.paidLbl); setText('t-paid-period', t.paidPeriod); setText('t-paid-desc', t.paidDesc);
+  setText('t-paid-btn', t.paidBtn); setHTML('t-price-note', t.priceNote);
+  // FAQ
+  setText('t-faq-eyebrow', t.faqEyebrow); setHTML('t-faq-title', t.faqTitle);
+  // Final CTA
+  setText('t-final-h2', t.finalH2); setText('t-final-fire', t.finalFire);
+  setText('t-final-p', t.finalP); setText('t-final-btn', t.finalBtn);
+  setText('t-trust1', t.trust1); setText('t-trust2', t.trust2); setText('t-trust3', t.trust3);
+  setText('t-trust4', t.trust4); setText('t-trust5', t.trust5);
+  // Footer
+  setText('t-footer-impressum', t.footerImpressum); setText('t-footer-privacy', t.footerPrivacy);
+  setText('t-footer-agb', t.footerAgb); setText('t-footer-contact', t.footerContact);
+  // App
+  setText('t-back-btn', t.backBtn); setText('t-app-badge', t.appBadge);
+  setText('t-app-eyebrow', t.appEyebrow); setText('t-app-h1-fire', t.appH1Fire); setText('t-app-sub', t.appSub);
+  setText('t-plat-label', t.platLabel); setText('t-up-label', t.upLabel);
+  setText('t-up-h3', t.upH3); setText('t-up-p', t.upP);
+  setText('t-bio-label', t.bioLabel);
+  const bioInp=$('bio-inp'); if(bioInp) bioInp.placeholder=t.bioPH;
+  setText('start-btn', t.startBtn); setText('t-start-hint', t.startHint);
+  setText('t-or', t.orLabel); setText('t-direct-buy', t.directBuy); setText('t-direct-hint', t.directHint);
 }
 </script>
 </body>
