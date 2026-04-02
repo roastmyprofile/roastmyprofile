@@ -647,29 +647,29 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 <div class="overlay-bg hide" id="ex-modal">
   <div class="overlay-box">
     <button class="overlay-x" onclick="closeExample()">✕</button>
-    <div class="ex-modal-tag">👀 Echtes Beispiel – Mini Roast</div>
+    <div class="ex-modal-tag" id="t-exm-tag">👀 Echtes Beispiel – Mini Roast</div>
     <div class="ex-score-row">
       <div class="ex-score-num">4.2</div>
       <div class="ex-score-info">
-        <div class="ex-score-label">Match-Score</div>
-        <div class="ex-headline-txt">"Solide, aber komplett austauschbar."</div>
+        <div class="ex-score-label" id="t-exm-score-lbl">Match-Score</div>
+        <div class="ex-headline-txt" id="t-exm-headline">"Solide, aber komplett austauschbar."</div>
       </div>
     </div>
     <div class="ex-item">
-      <div class="ex-item-hd"><span class="ex-item-em">📸</span><span class="ex-item-cat">Erstes Foto</span><span class="ex-item-sev">KRITISCH</span></div>
-      <div class="ex-item-txt">Gruppenfoto als erstes Bild ist ungünstig – niemand weiß sofort wer du bist und die meisten wischen weiter bevor sie rausfinden wollen wer du bist. Das erste Foto sollte ein klares Einzelbild von dir sein, gerne draußen mit natürlichem Licht.</div>
+      <div class="ex-item-hd"><span class="ex-item-em">📸</span><span class="ex-item-cat" id="t-exm-cat1">Erstes Foto</span><span class="ex-item-sev">KRITISCH</span></div>
+      <div class="ex-item-txt" id="t-exm-txt1">Gruppenfoto als erstes Bild ist ungünstig – niemand weiß sofort wer du bist und die meisten wischen weiter bevor sie rausfinden wollen wer du bist. Das erste Foto sollte ein klares Einzelbild von dir sein, gerne draußen mit natürlichem Licht.</div>
     </div>
     <div class="ex-item">
-      <div class="ex-item-hd"><span class="ex-item-em">✍️</span><span class="ex-item-cat">Bio</span><span class="ex-item-sev">KRITISCH</span></div>
-      <div class="ex-item-txt">"Ich liebe Reisen, Sport und gutes Essen" – das schreiben wortwörtlich Tausende. Deine Bio erklärt nicht warum man mit dir schreiben sollte. Kein Aufhänger, kein Witz, kein Gesprächsstarter.</div>
+      <div class="ex-item-hd"><span class="ex-item-em">✍️</span><span class="ex-item-cat" id="t-exm-cat2">Bio</span><span class="ex-item-sev">KRITISCH</span></div>
+      <div class="ex-item-txt" id="t-exm-txt2">"Ich liebe Reisen, Sport und gutes Essen" – das schreiben wortwörtlich Tausende. Deine Bio erklärt nicht warum man mit dir schreiben sollte. Kein Aufhänger, kein Witz, kein Gesprächsstarter.</div>
     </div>
     <div class="ex-item">
-      <div class="ex-item-hd"><span class="ex-item-em">💡</span><span class="ex-item-cat">Gesprächsstarter</span><span class="ex-item-sev m">WICHTIG</span></div>
-      <div class="ex-item-txt">Es gibt nichts worüber man dich ansprechen könnte. Du brauchst mindestens einen konkreten Aufhänger der neugierig macht – eine Eigenheit, ein Witz, eine Frage.</div>
+      <div class="ex-item-hd"><span class="ex-item-em">💡</span><span class="ex-item-cat" id="t-exm-cat3">Gesprächsstarter</span><span class="ex-item-sev m">WICHTIG</span></div>
+      <div class="ex-item-txt" id="t-exm-txt3">Es gibt nichts worüber man dich ansprechen könnte. Du brauchst mindestens einen konkreten Aufhänger der neugierig macht – eine Eigenheit, ein Witz, eine Frage.</div>
     </div>
-    <div class="ex-lock-note">🔒 <strong>Der volle Roast</strong> enthält 10+ Kritikpunkte, vollständige Foto-Analyse und 3 fertig geschriebene Bios die du direkt kopieren kannst.</div>
-    <button class="overlay-cta" onclick="closeExample();showApp();">🔥 Jetzt mein Profil analysieren</button>
-    <div class="overlay-note">Kostenloser Mini-Roast · Kein Konto nötig</div>
+    <div class="ex-lock-note" id="t-exm-lock">🔒 <strong>Der volle Roast</strong> enthält 10+ Kritikpunkte, vollständige Foto-Analyse und 3 fertig geschriebene Bios die du direkt kopieren kannst.</div>
+    <button class="overlay-cta" id="t-exm-cta" onclick="closeExample();showApp();">🔥 Jetzt mein Profil analysieren</button>
+    <div class="overlay-note" id="t-exm-note">Kostenloser Mini-Roast · Kein Konto nötig</div>
   </div>
 </div>
 
@@ -1149,7 +1149,18 @@ const T = {
     bioLabel: "Deine Bio / Profiltext *", bioPH: "Füge deinen Bio-Text ein. Beispiel: Ich liebe Reisen, Sport und meine Hunde",
     startBtn: "🔥 Kostenlosen Roast starten", startHint: "Kostenlos: 3 Kritikpunkte + Score · Kein Konto nötig",
     orLabel: "oder", directBuy: "💳 Direkt vollen Roast kaufen – 4,99 €",
-    directHint: "10+ Kritikpunkte · 3 optimierte Bios · Einmalzahlung"
+    directHint: "10+ Kritikpunkte · 3 optimierte Bios · Einmalzahlung",
+    exmTag: "👀 Echtes Beispiel – Mini Roast", exmScoreLbl: "Match-Score",
+    exmHeadline: "Solide, aber komplett austauschbar.",
+    exmCat1: "Erstes Foto", exmTxt1: "Gruppenfoto als erstes Bild ist ungünstig – niemand weiß sofort wer du bist und die meisten wischen weiter. Das erste Foto sollte ein klares Einzelbild von dir sein, gerne draußen mit natürlichem Licht.",
+    exmCat2: "Bio", exmTxt2: "Ich liebe Reisen, Sport und gutes Essen – das schreiben wortwörtlich Tausende. Deine Bio erklärt nicht warum man mit dir schreiben sollte. Kein Aufhänger, kein Witz, kein Gesprächsstarter.",
+    exmCat3: "Gesprächsstarter", exmTxt3: "Es gibt nichts worüber man dich ansprechen könnte. Du brauchst mindestens einen konkreten Aufhänger der neugierig macht – eine Eigenheit, ein Witz, eine Frage.",
+    exmLock: "🔒 <strong>Der volle Roast</strong> enthält 10+ Kritikpunkte, vollständige Foto-Analyse und 3 fertig geschriebene Bios die du direkt kopieren kannst.",
+    exmCta: "🔥 Jetzt mein Profil analysieren", exmNote: "Kostenloser Mini-Roast · Kein Konto nötig",
+    pill1Strong: "Generisch bis zur Unkenntlichkeit.", pill1Text: "Jeder liebt Reisen. Was macht dich besonders?",
+    pill2Strong: "Kein Gesprächsstarter.", pill2Text: "Was soll die andere Person schreiben?",
+    pill3Strong: "Sofort sympathisch.", pill3Text: "Konkreter Beruf + Selbstironie = Persönlichkeit.",
+    pill4Strong: "Perfekter Gesprächsstarter.", pill4Text: "Läuft sofort."
   },
   en: {
     navStats: "3,847 profiles analyzed this week", navCta: "Try it free 🔥",
@@ -1193,7 +1204,18 @@ const T = {
     bioLabel: "Your bio / profile text", bioPH: "Paste your bio here. Example: Love hiking, good food and my dog",
     startBtn: "🔥 Get my free roast", startHint: "Free: 3 feedback points + score · No account needed",
     orLabel: "or", directBuy: "💳 Get full roast now – 4.99 EUR",
-    directHint: "10+ feedback points · 3 optimized bios · One-time payment"
+    directHint: "10+ feedback points · 3 optimized bios · One-time payment",
+    exmTag: "👀 Real Example – Mini Roast", exmScoreLbl: "Match Score",
+    exmHeadline: "Decent, but completely forgettable.",
+    exmCat1: "First Photo", exmTxt1: "Group photo as the first image is a problem – nobody knows who you are and most people swipe before they find out. Your first photo should be a clear solo shot, ideally outdoors with natural light.",
+    exmCat2: "Bio", exmTxt2: "I love travel, sports and good food – thousands of people write exactly this. Your bio does not explain why anyone should message you. No hook, no personality, no conversation starter.",
+    exmCat3: "Conversation Starter", exmTxt3: "There is nothing to talk to you about. You need at least one concrete hook that sparks curiosity – a quirk, a joke, a question.",
+    exmLock: "🔒 <strong>The full roast</strong> includes 10+ feedback points, complete photo analysis and 3 ready-to-copy bios.",
+    exmCta: "🔥 Analyze my profile now", exmNote: "Free Mini-Roast · No account needed",
+    pill1Strong: "Generic to the core.", pill1Text: "Everyone loves travel. What makes you different?",
+    pill2Strong: "No conversation starter.", pill2Text: "What is the other person supposed to write?",
+    pill3Strong: "Instantly likeable.", pill3Text: "Specific job + self-deprecation = personality.",
+    pill4Strong: "Perfect conversation starter.", pill4Text: "Works immediately."
   }
 };
 let currentLang = localStorage.getItem('rmp_lang') || (navigator.language.startsWith('de') ? 'de' : 'en');
@@ -1265,6 +1287,19 @@ function applyLang() {
   const bioInp=$('bio-inp'); if(bioInp) bioInp.placeholder=t.bioPH;
   setText('start-btn', t.startBtn); setText('t-start-hint', t.startHint);
   setText('t-or', t.orLabel); setText('t-direct-buy', t.directBuy); setText('t-direct-hint', t.directHint);
+  // Example modal
+  setText('t-exm-tag', t.exmTag); setText('t-exm-score-lbl', t.exmScoreLbl);
+  setText('t-exm-headline', t.exmHeadline);
+  setText('t-exm-cat1', t.exmCat1); setText('t-exm-txt1', t.exmTxt1);
+  setText('t-exm-cat2', t.exmCat2); setText('t-exm-txt2', t.exmTxt2);
+  setText('t-exm-cat3', t.exmCat3); setText('t-exm-txt3', t.exmTxt3);
+  setHTML('t-exm-lock', t.exmLock);
+  setText('t-exm-cta', t.exmCta); setText('t-exm-note', t.exmNote);
+  // Landing page pills
+  setText('t-pill1-strong', t.pill1Strong); setText('t-pill1-text', t.pill1Text);
+  setText('t-pill2-strong', t.pill2Strong); setText('t-pill2-text', t.pill2Text);
+  setText('t-pill3-strong', t.pill3Strong); setText('t-pill3-text', t.pill3Text);
+  setText('t-pill4-strong', t.pill4Strong); setText('t-pill4-text', t.pill4Text);
 }
 </script>
 </body>
