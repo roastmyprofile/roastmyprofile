@@ -17,7 +17,9 @@ module.exports = async function handler(req, res) {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      // automatic_payment_methods lässt Stripe alle aktivierten Methoden anzeigen
+      // inkl. Apple Pay, Google Pay, PayPal (wenn aktiviert im Dashboard)
+      automatic_payment_methods: { enabled: true },
       customer_email: email || undefined,
       line_items: [
         {
