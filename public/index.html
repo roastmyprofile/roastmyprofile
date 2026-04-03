@@ -6,6 +6,7 @@
 <title>RoastMyProfile 🔥 – Warum du keine Matches bekommst</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
+
 :root{--fire:#FF4500;--fire2:#FF7A3D;--gold:#FFB800;--cream:#FFF8F0;--dark:#0D0905;--dark2:#160F09;--card:#1C1209;--border:rgba(255,255,255,0.07);--smoke:#7A6A5A;--green:#22C55E;--muted:rgba(255,248,240,0.55);}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;}
@@ -388,9 +389,10 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   .res-hd{flex-direction:column;}
   .big-num{font-size:56px;}
 }
+
 </style>
 </head>
-<body>
+
 <div class="ambient"></div>
 <div class="wrap">
 
@@ -904,446 +906,8 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 
 </div><!-- /wrap -->
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// Alle Initialisierungen nach DOM-Laden
-document.addEventListener('DOMContentLoaded', function() {
-
-  // ── BURGER MENU ──
-function toggleBurger() {
-  const btn = document.getElementById('burger-btn');
-  const menu = document.getElementById('burger-menu');
-  btn.classList.toggle('open');
-  menu.classList.toggle('open');
-}
-function closeBurger() {
-  document.getElementById('burger-btn').classList.remove('open');
-  document.getElementById('burger-menu').classList.remove('open');
-}
-function scrollToSection(id) {
-  showLanding();
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 100);
-}
-
-// ── DSGVO ──
-  if (!localStorage.getItem('dsgvo_ok')) {
-    document.getElementById('dsgvo-banner').classList.remove('hide');
-  }
-
-  // ── LANGUAGE INIT ──
-  applyLang();
-
-  // ── DRAG & DROP ──
-  const uz = document.getElementById('up-zone');
-  if (uz) {
-    uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag'); });
-    uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
-    uz.addEventListener('drop', e => { e.preventDefault(); uz.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
-  }
-
-  // ── MODAL BACKDROP CLICKS ──
-  document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
-  document.getElementById('lead-modal').addEventListener('click', e => { /* no close on backdrop - required fields */ });
-  document.addEventListener('click', e => {
-    const burger = document.getElementById('burger-menu');
-    const btn = document.getElementById('burger-btn');
-    if(burger && burger.classList.contains('open') && !burger.contains(e.target) && !btn.contains(e.target)) closeBurger();
-  });
-  document.getElementById('ex-modal').addEventListener('click', e => { if(e.target===document.getElementById('ex-modal')) closeExample(); });
-  document.getElementById('legal-modal').addEventListener('click', e => { if(e.target===document.getElementById('legal-modal')) closeLegal(); });
-  document.getElementById('kontakt-modal').addEventListener('click', e => { if(e.target===document.getElementById('kontakt-modal')) closeKontakt(); });
-
-  // ── SCROLL REVEAL ──
-  const ro = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('vis');ro.unobserve(e.target);} });
-  }, { threshold:0.1, rootMargin:'0px 0px -30px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
-
-  // ── POST-STRIPE ──
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('success') === 'true') {
-    const savedBio = localStorage.getItem('rmp_bio') || '';
-    const savedPlatform = localStorage.getItem('rmp_platform') || 'Tinder';
-    const savedName = localStorage.getItem('rmp_name') || '';
-    const savedEmail = localStorage.getItem('rmp_email') || '';
-    if (savedBio) document.getElementById('bio-inp').value = savedBio;
-    platform = savedPlatform;
-    window._userName = savedName;
-    window._userEmail = savedEmail;
-    showApp();
-    showScreen('ascreen-load');
-    animateSteps(async () => {
-      try {
-        fullData = await callAI(true);
-        renderFullResult(fullData, savedName);
-        if (savedEmail) {
-          fetch('/api/send-email', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ name:savedName, email:savedEmail, platform:savedPlatform, roastData:fullData }) }).catch(()=>{});
-        }
-        ['rmp_bio','rmp_platform','rmp_name','rmp_email'].forEach(k => localStorage.removeItem(k));
-        showScreen('ascreen-full');
-      } catch(e) { showErr(e.message || 'Fehler beim Laden.'); }
-    });
-  }
-  if (params.get('canceled') === 'true') {
-    showApp();
-    showErr('Zahlung abgebrochen. Du kannst es jederzeit erneut versuchen.');
-  }
-
-}); // Ende DOMContentLoaded
-
-// ── STATE ──
-let platform = 'Tinder';
-let imgs = [];
-let freeData = null;
-let fullData = null;
-
-// ── NAVIGATION ──
-function showApp() {
-  document.getElementById('page-landing').style.display = 'none';
-  document.getElementById('page-app').style.display = 'block';
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-function showLanding() {
-  document.getElementById('page-app').style.display = 'none';
-  document.getElementById('page-landing').style.display = 'block';
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-function showScreen(id) {
-  document.querySelectorAll('.ascreen').forEach(s => s.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-// ── PLATFORM ──
-function setPlatform(btn) {
-  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  platform = btn.dataset.p;
-}
-
-// ── FILE UPLOAD ──
-function handleFiles(files) {
-  imgs = [];
-  const grid = document.getElementById('prev-grid');
-  grid.innerHTML = '';
-  Array.from(files).slice(0,6).forEach(f => {
-    const r = new FileReader();
-    r.onload = e => {
-      imgs.push(e.target.result);
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.className = 'prev-thumb';
-      grid.appendChild(img);
-    };
-    r.readAsDataURL(f);
-  });
-}
-
-// ── LOADING ──
-function animateSteps(cb) {
-  const ids = ['ls1','ls2','ls3','ls4','ls5'];
-  ids.forEach(id => { const el=document.getElementById(id); el.classList.remove('done','act'); });
-  let i = 0;
-  const iv = setInterval(() => {
-    if(i>0){document.getElementById(ids[i-1]).classList.remove('act');document.getElementById(ids[i-1]).classList.add('done');}
-    if(i<ids.length){document.getElementById(ids[i]).classList.add('act');i++;}
-    else{clearInterval(iv);setTimeout(cb,400);}
-  }, 700);
-}
-
-// ── ERROR ──
-function showErr(msg) {
-  const b = document.getElementById('err-box');
-  b.textContent = '⚠️ ' + msg;
-  b.style.display = 'block';
-  document.getElementById('start-btn').disabled = false;
-  const leadAgb = document.getElementById('lead-agb-check'); if(leadAgb) leadAgb.checked = false;
-  showScreen('ascreen-upload');
-}
-
-// ── COMPRESS IMAGE ──
-async function compressImg(dataUrl) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        const max = 600;
-        let w = img.width, h = img.height;
-        if(w>max){h=Math.round(h*max/w);w=max;}
-        if(h>max){w=Math.round(w*max/h);h=max;}
-        canvas.width=w; canvas.height=h;
-        canvas.getContext('2d').drawImage(img,0,0,w,h);
-        resolve(canvas.toDataURL('image/jpeg',0.6));
-      } catch(e) { resolve(null); }
-    };
-    img.onerror = () => resolve(null);
-    img.src = dataUrl;
-  });
-}
-
-// ── CALL AI ──
-async function callAI(isFull) {
-  const bio = document.getElementById('bio-inp').value.trim();
-  // Compress images, filter out failed ones
-  const compressedRaw = await Promise.all(imgs.slice(0,2).map(compressImg));
-  const compressedImgs = compressedRaw.filter(Boolean);
-  const body = {
-    platform, bio, isFull, lang: currentLang,
-    images: compressedImgs.map(img => img.replace(/^data:image\/[^;]+;base64,/, '')),
-    imageMimeTypes: compressedImgs.map(() => 'image/jpeg')
-  };
-  let res;
-  try {
-    res = await fetch('/api/roast', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-  } catch(networkErr) {
-    throw new Error(currentLang === 'en' ? 'Network error. Please check your connection.' : 'Netzwerkfehler. Bitte Verbindung prüfen.');
-  }
-  if (!res.ok) {
-    let errMsg = currentLang === 'en' ? 'Something went wrong.' : 'Fehler. Bitte nochmal versuchen.';
-    try { const e = await res.json(); if(e.error) errMsg = e.error; } catch(e) {}
-    throw new Error(errMsg);
-  }
-  let data;
-  try { data = await res.json(); } catch(e) {
-    throw new Error(currentLang === 'en' ? 'Invalid response. Please try again.' : 'Ungültige Antwort. Bitte nochmal versuchen.');
-  }
-  if (!data.score || !data.roast_items) {
-    throw new Error(currentLang === 'en' ? 'Incomplete response. Please try again.' : 'Unvollständige Antwort. Bitte nochmal versuchen.');
-  }
-  return data;
-}
-
-// ── RENDER ──
-function renderCards(items, containerId) {
-  const c = document.getElementById(containerId);
-  c.innerHTML = '';
-  const sevMap = { 'hoch':['sev-h','KRITISCH'], 'mittel':['sev-m','WICHTIG'], 'niedrig':['sev-l','OK'] };
-  (items||[]).forEach(item => {
-    const [cls,lbl] = sevMap[item.severity] || ['sev-m','INFO'];
-    c.innerHTML += `<div class="rcard"><div class="rcard-hd"><span class="rcard-em">${item.emoji||'🔥'}</span><span class="rcard-cat">${item.category||''}</span><span class="rcard-sev ${cls}">${lbl}</span></div><p class="rcard-txt">${item.text||''}</p></div>`;
-  });
-}
-
-function renderFullResult(data, name) {
-  fullData = data;
-  document.getElementById('full-headline').textContent = data.headline || 'Voller Roast';
-  document.getElementById('full-score').textContent = data.score || '?';
-  if (name) document.getElementById('full-banner-title').textContent = `🔥 Hey ${name}, dein Roast ist fertig!`;
-  renderCards(data.roast_items, 'full-items');
-  const bvl = document.getElementById('bv-list');
-  bvl.innerHTML = '';
-  (data.bio_versions||[]).forEach((v,i) => {
-    bvl.innerHTML += `<div class="bv-card"><div class="bv-lbl">Version ${i+1} – ${v.label||''}</div><p class="bv-txt">${v.text||''}</p><button class="copy-btn" onclick="copyBio(${i})">Kopieren</button></div>`;
-  });
-}
-
-// ── LEAD MODAL ──
-function openLeadModal() {
-  const bio = document.getElementById('bio-inp').value.trim();
-  if (!bio && imgs.length === 0) {
-    const msg = currentLang === 'en' ? 'Please add at least your bio text or a photo.' : 'Bitte füge mindestens deinen Bio-Text oder ein Foto hinzu.';
-    showErr(msg); return;
-  }
-  document.getElementById('lead-modal').classList.remove('hide');
-}
-async function submitLead() {
-  const name = document.getElementById('lead-name').value.trim();
-  const email = document.getElementById('lead-email').value.trim();
-  const errEl = document.getElementById('lead-err');
-  const agbCheck = document.getElementById('lead-agb-check');
-  if (!agbCheck.checked) {
-    errEl.textContent = currentLang === 'en' ? 'Please accept the Terms and Privacy Policy.' : 'Bitte stimme den AGB und der Datenschutzerklärung zu.';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!name) {
-    errEl.textContent = currentLang === 'en' ? 'Please enter your name.' : 'Bitte gib deinen Namen ein.';
-    errEl.style.display = 'block';
-    document.getElementById('lead-name').focus();
-    return;
-  }
-  if (!email || !email.includes('@')) {
-    errEl.textContent = currentLang === 'en' ? 'Please enter a valid email address.' : 'Bitte gib eine gültige E-Mail-Adresse ein.';
-    errEl.style.display = 'block';
-    document.getElementById('lead-email').focus();
-    return;
-  }
-  errEl.style.display = 'none';
-  window._leadName = name;
-  window._leadEmail = email;
-  document.getElementById('lead-modal').classList.add('hide');
-  doStartRoast();
-}
-
-// ── START ROAST ──
-async function startRoast() { openLeadModal(); }
-async function doStartRoast() {
-  document.getElementById('err-box').style.display = 'none';
-  document.getElementById('start-btn').disabled = true;
-  showScreen('ascreen-load');
-  animateSteps(async () => {
-    try {
-      freeData = await callAI(false);
-      document.getElementById('res-headline').textContent = freeData.headline || 'Dein Roast';
-      document.getElementById('res-score').textContent = freeData.score || '?';
-      renderCards(freeData.roast_items, 'free-items');
-      showScreen('ascreen-free');
-      // Send free roast by email
-      const name = window._leadName || '';
-      const email = window._leadEmail || '';
-      if (email) {
-        fetch('/api/send-email', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ name, email, platform, roastData: freeData, isFree: true })
-        }).catch(() => {});
-      }
-    } catch(e) { showErr(e.message || 'Fehler. Bitte nochmal versuchen.'); }
-  });
-}
-
-// ── RESET ──
-function resetApp() {
-  imgs=[]; freeData=null; fullData=null;
-  document.getElementById('bio-inp').value = '';
-  document.getElementById('prev-grid').innerHTML = '';
-  document.getElementById('start-btn').disabled = false;
-  const leadAgb = document.getElementById('lead-agb-check'); if(leadAgb) leadAgb.checked = false;
-  document.getElementById('err-box').style.display = 'none';
-  showScreen('ascreen-upload');
-}
-
-// ── COPY BIO ──
-function copyBio(i) {
-  if (!fullData?.bio_versions) return;
-  navigator.clipboard.writeText(fullData.bio_versions[i]?.text||'').then(() => {
-    const btns = document.querySelectorAll('.copy-btn');
-    if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='Kopieren',2000);}
-  });
-}
-
-// ── SHARE ──
-function doShare(p) {
-  const score = freeData?.score || fullData?.score || '?';
-  const txt = `Mein ${platform}-Profil wurde von einer KI gerostet – Score: ${score}/10 💀🔥 roastmyprofile.app`;
-  if(p==='twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}`);
-  else if(p==='whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
-  else navigator.clipboard.writeText('https://roastmyprofile.app').then(()=>alert('Link kopiert! 🔥'));
-}
-
-// ── FAQ ──
-function toggleFaq(btn) {
-  const item = btn.parentElement;
-  const open = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-  if(!open) item.classList.add('open');
-}
-
-// ── MODAL ──
-function openModal() { document.getElementById('modal').classList.remove('hide'); }
-function closeModal() { document.getElementById('modal').classList.add('hide'); }
-
-// ── CHECKOUT ──
-async function doCheckout() {
-  const name = document.getElementById('user-name').value.trim();
-  const email = document.getElementById('user-email').value.trim();
-  const agb = document.getElementById('agb-check').checked;
-  if (!name) { document.getElementById('user-name').style.borderColor='var(--fire)'; return; }
-  if (!email || !email.includes('@')) { document.getElementById('user-email').style.borderColor='var(--fire)'; return; }
-  if (!agb) { alert('Bitte akzeptiere die AGB um fortzufahren.'); return; }
-  window._userName = name;
-  window._userEmail = email;
-  const btn = document.getElementById('stripe-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Weiterleitung zu Stripe...';
-  try {
-    localStorage.setItem('rmp_bio', document.getElementById('bio-inp').value.trim());
-    localStorage.setItem('rmp_platform', platform);
-    localStorage.setItem('rmp_name', name);
-    localStorage.setItem('rmp_email', email);
-    const res = await fetch('/api/create-checkout', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platform,name,email}) });
-    const {url,error} = await res.json();
-    if(error) throw new Error(error);
-    window.location.href = url;
-  } catch(e) {
-    btn.disabled=false; btn.textContent='💳 Jetzt bezahlen – 4,99 €';
-    alert('Fehler: ' + (e.message||'Zahlung konnte nicht gestartet werden.'));
-  }
-}
-
-// ── BEISPIEL MODAL ──
-function openExample() { document.getElementById('ex-modal').classList.remove('hide'); }
-function closeExample() { document.getElementById('ex-modal').classList.add('hide'); }
-
-// ── LEGAL ──
-function openLegal(page) {
-  ['impressum','datenschutz','agb'].forEach(p => {
-    const isActive = p === page;
-    const de = document.getElementById('lp-'+p);
-    const en = document.getElementById('lp-'+p+'-en');
-    if(de) de.classList.toggle('hide', !isActive || currentLang === 'en');
-    if(en) en.classList.toggle('hide', !isActive || currentLang === 'de');
-  });
-  document.getElementById('legal-modal').classList.remove('hide');
-}
-function closeLegal() { document.getElementById('legal-modal').classList.add('hide'); }
-
-// ── KONTAKT ──
-function openKontakt() {
-  document.getElementById('kontakt-form-wrap').style.display='block';
-  document.getElementById('kontakt-success').style.display='none';
-  document.getElementById('kontakt-modal').classList.remove('hide');
-}
-function closeKontakt() { document.getElementById('kontakt-modal').classList.add('hide'); }
-async function sendKontakt() {
-  const name = document.getElementById('k-name').value.trim();
-  const email = document.getElementById('k-email').value.trim();
-  const subject = document.getElementById('k-subject').value;
-  const message = document.getElementById('k-message').value.trim();
-  if(!name||!email||!subject||!message){alert(currentLang==='de'?'Bitte alle Felder ausfüllen.':'Please fill in all fields.');return;}
-  const btn = document.getElementById('k-submit');
-  btn.disabled=true; btn.textContent='⏳...';
-  try {
-    await fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,platform:'Contact Form',roastData:{score:0,headline:`Contact: ${subject}`,roast_items:[{emoji:'✉️',category:'Message',severity:'niedrig',text:message}],bio_versions:[]}})});
-  } catch(e){}
-  document.getElementById('kontakt-form-wrap').style.display='none';
-  document.getElementById('kontakt-success').style.display='block';
-  btn.disabled=false; btn.textContent='📨 ' + (currentLang==='de'?'Nachricht senden':'Send message');
-}
-
-// ── BURGER MENU ──
-function toggleBurger() {
-  const btn = document.getElementById('burger-btn');
-  const menu = document.getElementById('burger-menu');
-  btn.classList.toggle('open');
-  menu.classList.toggle('open');
-}
-function closeBurger() {
-  document.getElementById('burger-btn').classList.remove('open');
-  document.getElementById('burger-menu').classList.remove('open');
-}
-function scrollToSection(id) {
-  showLanding();
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
-  }, 100);
-}
-
-// ── DSGVO ──
-function acceptDsgvo() {
-  document.getElementById('dsgvo-banner').classList.add('hide');
-  localStorage.setItem('dsgvo_ok','1');
-}
-
-// ── LANGUAGE SWITCHER ──
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
 const T = {
   de: {
     navStats: "3.847 Profile analysiert diese Woche", navCta: "Jetzt testen 🔥",
@@ -1476,6 +1040,7 @@ const T = {
     pill4Strong: "Perfect conversation starter.", pill4Text: "Works immediately."
   }
 };
+
 let currentLang = localStorage.getItem('rmp_lang') || (navigator.language.startsWith('de') ? 'de' : 'en');
 
 function setLang(lang) {
@@ -1491,7 +1056,6 @@ function applyLang() {
   document.documentElement.lang = currentLang;
   const setText = (id, val) => { const el=$(id); if(el) el.textContent=val; };
   const setHTML = (id, val) => { const el=$(id); if(el) el.innerHTML=val; };
-  // Nav + Hero
   setText('nav-stats', t.navStats); setText('nav-cta-btn', t.navCta);
   setText('t-eyebrow', t.eyebrow); setText('t-h1-prefix', t.h1Prefix);
   setText('t-h1-fire', t.h1Fire); setText('t-h1-dim', t.h1Dim);
@@ -1499,66 +1063,48 @@ function applyLang() {
   setText('t-cta-main', t.ctaMain); setText('t-cta-example', t.ctaExample);
   setText('t-hero-note', t.heroNote);
   setText('t-stat1', t.stat1); setText('t-stat2', t.stat2); setText('t-stat3', t.stat3); setText('t-stat4', t.stat4);
-  // Pain section
   setText('t-pain-eyebrow', t.painEyebrow); setHTML('t-pain-title', t.painTitle); setText('t-pain-sub', t.painSub);
   setText('t-pain1-title', t.pain1Title); setText('t-pain1-text', t.pain1Text);
   setText('t-pain2-title', t.pain2Title); setText('t-pain2-text', t.pain2Text);
   setText('t-pain3-title', t.pain3Title); setText('t-pain3-text', t.pain3Text);
-  // Example
   setText('t-ex-eyebrow', t.exEyebrow); setText('t-ex-title', t.exTitle);
   setText('t-ex-before-tag', t.exBeforeTag); setText('t-ex-after-tag', t.exAfterTag);
   setText('t-ex-cta', t.exCta); setText('t-ex-cta-note', t.exCtaNote);
-  // Steps
+  setText('t-ex-bio-bad', t.bioBad); setText('t-ex-bio-good', t.bioGood);
+  setText('t-pill1-strong', t.pill1Strong); setText('t-pill1-text', t.pill1Text);
+  setText('t-pill2-strong', t.pill2Strong); setText('t-pill2-text', t.pill2Text);
+  setText('t-pill3-strong', t.pill3Strong); setText('t-pill3-text', t.pill3Text);
+  setText('t-pill4-strong', t.pill4Strong); setText('t-pill4-text', t.pill4Text);
   setText('t-steps-eyebrow', t.stepsEyebrow); setHTML('t-steps-title', t.stepsTitle);
   setText('t-step1-t', t.step1T); setText('t-step1-p', t.step1P);
   setText('t-step2-t', t.step2T); setText('t-step2-p', t.step2P);
   setText('t-step3-t', t.step3T); setText('t-step3-p', t.step3P);
-  // Reviews
   setText('t-rv-eyebrow', t.rvEyebrow); setText('t-rv-title', t.rvTitle);
   setText('t-rv1-res', t.rv1Res); setText('t-rv1-txt', t.rv1Txt); setText('t-rv1-meta', t.rv1Meta);
   setText('t-rv2-res', t.rv2Res); setText('t-rv2-txt', t.rv2Txt); setText('t-rv2-meta', t.rv2Meta);
   setText('t-rv3-res', t.rv3Res); setText('t-rv3-txt', t.rv3Txt); setText('t-rv3-meta', t.rv3Meta);
   setText('t-rv-big', t.rvBig); setText('t-rv-big-meta', t.rvBigMeta);
-  // Pricing
   setText('t-price-eyebrow', t.priceEyebrow); setText('t-price-title', t.priceTitle);
   setText('t-free-lbl', t.freeLbl); setText('t-free-period', t.freePeriod); setText('t-free-desc', t.freeDesc);
+  setText('t-free-f1', t.freeF1); setText('t-free-f2', t.freeF2); setText('t-free-f3', t.freeF3); setText('t-free-f4', t.freeF4); setText('t-free-f5', t.freeF5);
   setText('t-free-btn', t.freeBtn);
   setText('t-paid-pop', t.paidPop); setText('t-paid-lbl', t.paidLbl); setText('t-paid-period', t.paidPeriod); setText('t-paid-desc', t.paidDesc);
+  setText('t-paid-f1', t.paidF1); setText('t-paid-f2', t.paidF2); setText('t-paid-f3', t.paidF3); setText('t-paid-f4', t.paidF4); setText('t-paid-f5', t.paidF5);
   setText('t-paid-btn', t.paidBtn); setHTML('t-price-note', t.priceNote);
-  // FAQ
   setText('t-faq-eyebrow', t.faqEyebrow); setHTML('t-faq-title', t.faqTitle);
   setText('t-faq1-q', t.faq1q); setText('t-faq1-a', t.faq1a);
   setText('t-faq2-q', t.faq2q); setText('t-faq2-a', t.faq2a);
   setText('t-faq3-q', t.faq3q); setText('t-faq3-a', t.faq3a);
   setText('t-faq4-q', t.faq4q); setText('t-faq4-a', t.faq4a);
   setText('t-faq5-q', t.faq5q); setText('t-faq5-a', t.faq5a);
-  setText('t-ex-bio-bad', t.bioBad); setText('t-ex-bio-good', t.bioGood);
-  setText('t-free-f1', t.freeF1); setText('t-free-f2', t.freeF2); setText('t-free-f3', t.freeF3); setText('t-free-f4', t.freeF4); setText('t-free-f5', t.freeF5);
-  setText('t-paid-f1', t.paidF1); setText('t-paid-f2', t.paidF2); setText('t-paid-f3', t.paidF3); setText('t-paid-f4', t.paidF4); setText('t-paid-f5', t.paidF5);
-  // Final CTA
   setText('t-final-h2', t.finalH2); setText('t-final-fire', t.finalFire);
   setText('t-final-p', t.finalP); setText('t-final-btn', t.finalBtn);
-  setText('t-trust1', t.trust1); setText('t-trust2', t.trust2); setText('t-trust3', t.trust3);
-  setText('t-trust4', t.trust4); setText('t-trust5', t.trust5);
-  // Footer
+  setText('t-trust1', t.trust1); setText('t-trust2', t.trust2); setText('t-trust3', t.trust3); setText('t-trust4', t.trust4); setText('t-trust5', t.trust5);
   setText('t-footer-impressum', t.footerImpressum); setText('t-footer-privacy', t.footerPrivacy);
-  // Burger menu
-  setText('bm-mistakes', t.bmMistakes); setText('bm-example', t.bmExample); setText('bm-how', t.bmHow);
-  setText('bm-pricing', t.bmPricing); setText('bm-faq', t.bmFaq); setText('bm-cta', t.bmCta);
-  // Lead modal
-  setText('t-lead-title', t.leadTitle); setText('t-lead-sub', t.leadSub);
-  setText('t-lead-p1', t.leadP1); setText('t-lead-p2', t.leadP2); setText('t-lead-p3', t.leadP3);
-  setText('t-lead-name-lbl', t.leadNameLbl); setText('t-lead-email-lbl', t.leadEmailLbl);
-  setText('t-lead-agb', t.leadAgb);
-  // Legal modals EN/DE switch
-  ['impressum','datenschutz','agb'].forEach(p => {
-    const de = document.getElementById('lp-'+p);
-    const en = document.getElementById('lp-'+p+'-en');
-    if(currentLang === 'en') { if(de) de.classList.add('hide'); if(en) en.classList.remove('hide'); }
-    else { if(de) de.classList.remove('hide'); if(en) en.classList.add('hide'); }
-  });
   setText('t-footer-agb', t.footerAgb); setText('t-footer-contact', t.footerContact);
-  // App
+  setText('bm-mistakes', t.bmMistakes); setText('bm-example', t.bmExample);
+  setText('bm-how', t.bmHow); setText('bm-pricing', t.bmPricing);
+  setText('bm-faq', t.bmFaq); setText('bm-cta', t.bmCta);
   setText('t-back-btn', t.backBtn); setText('t-app-badge', t.appBadge);
   setText('t-app-eyebrow', t.appEyebrow); setText('t-app-h1-fire', t.appH1Fire); setText('t-app-sub', t.appSub);
   setText('t-plat-label', t.platLabel); setText('t-up-label', t.upLabel);
@@ -1567,7 +1113,6 @@ function applyLang() {
   const bioInp=$('bio-inp'); if(bioInp) bioInp.placeholder=t.bioPH;
   setText('start-btn', t.startBtn); setText('t-start-hint', t.startHint);
   setText('t-or', t.orLabel); setText('t-direct-buy', t.directBuy); setText('t-direct-hint', t.directHint);
-  // Example modal
   setText('t-exm-tag', t.exmTag); setText('t-exm-score-lbl', t.exmScoreLbl);
   setText('t-exm-headline', t.exmHeadline);
   setText('t-exm-cat1', t.exmCat1); setText('t-exm-txt1', t.exmTxt1);
@@ -1575,12 +1120,423 @@ function applyLang() {
   setText('t-exm-cat3', t.exmCat3); setText('t-exm-txt3', t.exmTxt3);
   setHTML('t-exm-lock', t.exmLock);
   setText('t-exm-cta', t.exmCta); setText('t-exm-note', t.exmNote);
-  // Landing page pills
-  setText('t-pill1-strong', t.pill1Strong); setText('t-pill1-text', t.pill1Text);
-  setText('t-pill2-strong', t.pill2Strong); setText('t-pill2-text', t.pill2Text);
-  setText('t-pill3-strong', t.pill3Strong); setText('t-pill3-text', t.pill3Text);
-  setText('t-pill4-strong', t.pill4Strong); setText('t-pill4-text', t.pill4Text);
+  setText('t-lead-title', t.leadTitle); setText('t-lead-sub', t.leadSub);
+  setText('t-lead-p1', t.leadP1); setText('t-lead-p2', t.leadP2); setText('t-lead-p3', t.leadP3);
+  setText('t-lead-name-lbl', t.leadNameLbl); setText('t-lead-email-lbl', t.leadEmailLbl);
+  setText('t-lead-agb', t.leadAgb);
+  ['impressum','datenschutz','agb'].forEach(p => {
+    const isActive = document.getElementById('lp-'+p) && !document.getElementById('lp-'+p).classList.contains('hide');
+    const de = document.getElementById('lp-'+p);
+    const en = document.getElementById('lp-'+p+'-en');
+    if(de) de.classList.toggle('hide', currentLang === 'en');
+    if(en) en.classList.toggle('hide', currentLang === 'de');
+  });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!localStorage.getItem('dsgvo_ok')) {
+    document.getElementById('dsgvo-banner').classList.remove('hide');
+  }
+  applyLang();
+  const sel = document.getElementById('lang-sel');
+  if(sel) sel.value = currentLang;
+
+  const uz = document.getElementById('up-zone');
+  if(uz) {
+    uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag'); });
+    uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
+    uz.addEventListener('drop', e => { e.preventDefault(); uz.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+  }
+
+  document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
+  document.getElementById('lead-modal').addEventListener('click', e => { /* required - no backdrop close */ });
+  document.getElementById('ex-modal').addEventListener('click', e => { if(e.target===document.getElementById('ex-modal')) closeExample(); });
+  document.getElementById('legal-modal').addEventListener('click', e => { if(e.target===document.getElementById('legal-modal')) closeLegal(); });
+  document.getElementById('kontakt-modal').addEventListener('click', e => { if(e.target===document.getElementById('kontakt-modal')) closeKontakt(); });
+
+  document.addEventListener('click', e => {
+    const burger = document.getElementById('burger-menu');
+    const btn = document.getElementById('burger-btn');
+    if(burger && burger.classList.contains('open') && !burger.contains(e.target) && !btn.contains(e.target)) closeBurger();
+  });
+
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('vis'); ro.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const savedBio = localStorage.getItem('rmp_bio') || '';
+    const savedPlatform = localStorage.getItem('rmp_platform') || 'Tinder';
+    const savedName = localStorage.getItem('rmp_name') || '';
+    const savedEmail = localStorage.getItem('rmp_email') || '';
+    if(savedBio) document.getElementById('bio-inp').value = savedBio;
+    platform = savedPlatform;
+    window._userName = savedName;
+    window._userEmail = savedEmail;
+    showApp();
+    showScreen('ascreen-load');
+    animateSteps(async () => {
+      try {
+        fullData = await callAI(true);
+        renderFullResult(fullData, savedName);
+        if(savedEmail) {
+          fetch('/api/send-email', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ name:savedName, email:savedEmail, platform:savedPlatform, roastData:fullData }) }).catch(()=>{});
+        }
+        ['rmp_bio','rmp_platform','rmp_name','rmp_email'].forEach(k => localStorage.removeItem(k));
+        showScreen('ascreen-full');
+      } catch(e) { showErr(e.message || 'Fehler beim Laden.'); }
+    });
+  }
+  if (params.get('canceled') === 'true') {
+    showApp();
+    showErr('Zahlung abgebrochen. Du kannst es jederzeit erneut versuchen.');
+  }
+});
+
+// ── STATE ──
+let platform = 'Tinder';
+let imgs = [];
+let freeData = null;
+let fullData = null;
+
+// ── NAVIGATION ──
+function showApp() {
+  document.getElementById('page-landing').style.display = 'none';
+  document.getElementById('page-app').style.display = 'block';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function showLanding() {
+  document.getElementById('page-app').style.display = 'none';
+  document.getElementById('page-landing').style.display = 'block';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function showScreen(id) {
+  document.querySelectorAll('.ascreen').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+// ── BURGER MENU ──
+function toggleBurger() {
+  document.getElementById('burger-btn').classList.toggle('open');
+  document.getElementById('burger-menu').classList.toggle('open');
+}
+function closeBurger() {
+  document.getElementById('burger-btn').classList.remove('open');
+  document.getElementById('burger-menu').classList.remove('open');
+}
+function scrollToSection(id) {
+  showLanding();
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 100);
+}
+
+// ── PLATFORM ──
+function setPlatform(btn) {
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  platform = btn.dataset.p;
+}
+
+// ── FILE UPLOAD ──
+function handleFiles(files) {
+  imgs = [];
+  const grid = document.getElementById('prev-grid');
+  grid.innerHTML = '';
+  Array.from(files).slice(0,6).forEach(f => {
+    const r = new FileReader();
+    r.onload = e => {
+      imgs.push(e.target.result);
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'prev-thumb';
+      grid.appendChild(img);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+// ── LOADING ──
+function animateSteps(cb) {
+  const ids = ['ls1','ls2','ls3','ls4','ls5'];
+  ids.forEach(id => { const el = document.getElementById(id); el.classList.remove('done','act'); });
+  let i = 0;
+  const iv = setInterval(() => {
+    if(i > 0) { document.getElementById(ids[i-1]).classList.remove('act'); document.getElementById(ids[i-1]).classList.add('done'); }
+    if(i < ids.length) { document.getElementById(ids[i]).classList.add('act'); i++; }
+    else { clearInterval(iv); setTimeout(cb, 400); }
+  }, 700);
+}
+
+// ── ERROR ──
+function showErr(msg) {
+  const b = document.getElementById('err-box');
+  b.textContent = '⚠️ ' + msg;
+  b.style.display = 'block';
+  document.getElementById('start-btn').disabled = false;
+  const cb = document.getElementById('lead-agb-check'); if(cb) cb.checked = false;
+  showScreen('ascreen-upload');
+}
+
+// ── COMPRESS IMAGE ──
+async function compressImg(dataUrl) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const max = 600;
+        let w = img.width, h = img.height;
+        if(w > max){ h = Math.round(h*max/w); w = max; }
+        if(h > max){ w = Math.round(w*max/h); h = max; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      } catch(e) { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
+// ── CALL AI ──
+async function callAI(isFull) {
+  const bio = document.getElementById('bio-inp').value.trim();
+  const compressedRaw = await Promise.all(imgs.slice(0,2).map(compressImg));
+  const compressedImgs = compressedRaw.filter(Boolean);
+  let res;
+  try {
+    res = await fetch('/api/roast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        platform, bio, isFull, lang: currentLang,
+        images: compressedImgs.map(img => img.replace(/^data:image\/[^;]+;base64,/, '')),
+        imageMimeTypes: compressedImgs.map(() => 'image/jpeg')
+      })
+    });
+  } catch(e) {
+    throw new Error(currentLang === 'en' ? 'Network error. Please check your connection.' : 'Netzwerkfehler. Bitte Verbindung prüfen.');
+  }
+  if(!res.ok) {
+    let msg = currentLang === 'en' ? 'Something went wrong.' : 'Fehler. Bitte nochmal versuchen.';
+    try { const e = await res.json(); if(e.error) msg = e.error; } catch(e) {}
+    throw new Error(msg);
+  }
+  let data;
+  try { data = await res.json(); } catch(e) {
+    throw new Error(currentLang === 'en' ? 'Invalid response. Please try again.' : 'Ungültige Antwort. Bitte nochmal versuchen.');
+  }
+  if(!data.score || !data.roast_items) throw new Error(currentLang === 'en' ? 'Incomplete response.' : 'Unvollständige Antwort.');
+  return data;
+}
+
+// ── RENDER ──
+function renderCards(items, containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  const sevMapDE = { 'hoch':['sev-h','KRITISCH'], 'mittel':['sev-m','WICHTIG'], 'niedrig':['sev-l','OK'] };
+  const sevMapEN = { 'high':['sev-h','CRITICAL'], 'medium':['sev-m','IMPORTANT'], 'low':['sev-l','OK'] };
+  const sevMap = currentLang === 'en' ? {...sevMapDE, ...sevMapEN} : {...sevMapEN, ...sevMapDE};
+  (items||[]).forEach(item => {
+    const [cls,lbl] = sevMap[item.severity] || ['sev-m','INFO'];
+    c.innerHTML += `<div class="rcard"><div class="rcard-hd"><span class="rcard-em">${item.emoji||'🔥'}</span><span class="rcard-cat">${item.category||''}</span><span class="rcard-sev ${cls}">${lbl}</span></div><p class="rcard-txt">${item.text||''}</p></div>`;
+  });
+}
+
+function renderFullResult(data, name) {
+  fullData = data;
+  document.getElementById('full-headline').textContent = data.headline || 'Voller Roast';
+  document.getElementById('full-score').textContent = data.score || '?';
+  if(name) document.getElementById('full-banner-title').textContent = `🔥 Hey ${name}!`;
+  renderCards(data.roast_items, 'full-items');
+  const bvl = document.getElementById('bv-list');
+  bvl.innerHTML = '';
+  (data.bio_versions||[]).forEach((v,i) => {
+    bvl.innerHTML += `<div class="bv-card"><div class="bv-lbl">Version ${i+1} – ${v.label||''}</div><p class="bv-txt">${v.text||''}</p><button class="copy-btn" onclick="copyBio(${i})">Kopieren</button></div>`;
+  });
+}
+
+// ── LEAD MODAL ──
+function openLeadModal() {
+  const bio = document.getElementById('bio-inp').value.trim();
+  if(!bio && imgs.length === 0) {
+    showErr(currentLang === 'en' ? 'Please add your bio text or a photo.' : 'Bitte Bio-Text oder Foto hinzufügen.');
+    return;
+  }
+  document.getElementById('lead-modal').classList.remove('hide');
+}
+
+async function submitLead() {
+  const name = document.getElementById('lead-name').value.trim();
+  const email = document.getElementById('lead-email').value.trim();
+  const errEl = document.getElementById('lead-err');
+  const agbCb = document.getElementById('lead-agb-check');
+  if(!agbCb.checked) {
+    errEl.textContent = currentLang === 'en' ? 'Please accept the Terms and Privacy Policy.' : 'Bitte stimme den AGB zu.';
+    errEl.style.display = 'block'; return;
+  }
+  if(!name) {
+    errEl.textContent = currentLang === 'en' ? 'Please enter your name.' : 'Bitte Namen eingeben.';
+    errEl.style.display = 'block';
+    document.getElementById('lead-name').focus(); return;
+  }
+  if(!email || !email.includes('@')) {
+    errEl.textContent = currentLang === 'en' ? 'Please enter a valid email.' : 'Bitte gültige E-Mail eingeben.';
+    errEl.style.display = 'block';
+    document.getElementById('lead-email').focus(); return;
+  }
+  errEl.style.display = 'none';
+  window._leadName = name;
+  window._leadEmail = email;
+  document.getElementById('lead-modal').classList.add('hide');
+  doStartRoast();
+}
+
+// ── START ROAST ──
+function startRoast() { openLeadModal(); }
+
+async function doStartRoast() {
+  document.getElementById('err-box').style.display = 'none';
+  document.getElementById('start-btn').disabled = true;
+  showScreen('ascreen-load');
+  animateSteps(async () => {
+    try {
+      freeData = await callAI(false);
+      document.getElementById('res-headline').textContent = freeData.headline || 'Dein Roast';
+      document.getElementById('res-score').textContent = freeData.score || '?';
+      renderCards(freeData.roast_items, 'free-items');
+      showScreen('ascreen-free');
+      const email = window._leadEmail || '';
+      const name = window._leadName || '';
+      if(email) {
+        fetch('/api/send-email', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ name, email, platform, roastData: freeData, isFree: true })
+        }).catch(()=>{});
+      }
+    } catch(e) { showErr(e.message || 'Fehler. Bitte nochmal versuchen.'); }
+  });
+}
+
+// ── RESET ──
+function resetApp() {
+  imgs=[]; freeData=null; fullData=null;
+  document.getElementById('bio-inp').value = '';
+  document.getElementById('prev-grid').innerHTML = '';
+  document.getElementById('start-btn').disabled = false;
+  document.getElementById('err-box').style.display = 'none';
+  document.getElementById('lead-name').value = '';
+  document.getElementById('lead-email').value = '';
+  const cb = document.getElementById('lead-agb-check'); if(cb) cb.checked = false;
+  showScreen('ascreen-upload');
+}
+
+// ── COPY BIO ──
+function copyBio(i) {
+  if(!fullData?.bio_versions) return;
+  navigator.clipboard.writeText(fullData.bio_versions[i]?.text||'').then(() => {
+    const btns = document.querySelectorAll('.copy-btn');
+    if(btns[i]){ btns[i].textContent='✓ Kopiert!'; setTimeout(()=>btns[i].textContent='Kopieren',2000); }
+  });
+}
+
+// ── SHARE ──
+function doShare(p) {
+  const score = freeData?.score || fullData?.score || '?';
+  const txt = `Mein ${platform}-Profil wurde von einer KI gerostet – Score: ${score}/10 💀🔥 roastmyprofile.app`;
+  if(p==='twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}`);
+  else if(p==='whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
+  else navigator.clipboard.writeText('https://roastmyprofile.app').then(()=>alert('Link kopiert! 🔥'));
+}
+
+// ── FAQ ──
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// ── PAYMENT MODAL ──
+function openModal() { document.getElementById('modal').classList.remove('hide'); }
+function closeModal() { document.getElementById('modal').classList.add('hide'); }
+
+async function doCheckout() {
+  const name = document.getElementById('user-name').value.trim();
+  const email = document.getElementById('user-email').value.trim();
+  const agb = document.getElementById('agb-check').checked;
+  if(!name) { document.getElementById('user-name').style.borderColor='var(--fire)'; return; }
+  if(!email || !email.includes('@')) { document.getElementById('user-email').style.borderColor='var(--fire)'; return; }
+  if(!agb) { alert('Bitte akzeptiere die AGB um fortzufahren.'); return; }
+  const btn = document.getElementById('stripe-btn');
+  btn.disabled = true; btn.textContent = '⏳ Weiterleitung zu Stripe...';
+  try {
+    localStorage.setItem('rmp_bio', document.getElementById('bio-inp').value.trim());
+    localStorage.setItem('rmp_platform', platform);
+    localStorage.setItem('rmp_name', name);
+    localStorage.setItem('rmp_email', email);
+    const res = await fetch('/api/create-checkout', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platform,name,email}) });
+    const {url,error} = await res.json();
+    if(error) throw new Error(error);
+    window.location.href = url;
+  } catch(e) {
+    btn.disabled=false; btn.textContent='💳 Jetzt bezahlen – 4,99 €';
+    alert('Fehler: ' + (e.message||'Zahlung konnte nicht gestartet werden.'));
+  }
+}
+
+// ── EXAMPLE MODAL ──
+function openExample() { document.getElementById('ex-modal').classList.remove('hide'); }
+function closeExample() { document.getElementById('ex-modal').classList.add('hide'); }
+
+// ── LEGAL ──
+function openLegal(page) {
+  ['impressum','datenschutz','agb'].forEach(p => {
+    const isActive = p === page;
+    const de = document.getElementById('lp-'+p);
+    const en = document.getElementById('lp-'+p+'-en');
+    if(de) de.classList.toggle('hide', !isActive || currentLang === 'en');
+    if(en) en.classList.toggle('hide', !isActive || currentLang === 'de');
+  });
+  document.getElementById('legal-modal').classList.remove('hide');
+}
+function closeLegal() { document.getElementById('legal-modal').classList.add('hide'); }
+
+// ── KONTAKT ──
+function openKontakt() {
+  document.getElementById('kontakt-form-wrap').style.display='block';
+  document.getElementById('kontakt-success').style.display='none';
+  document.getElementById('kontakt-modal').classList.remove('hide');
+}
+function closeKontakt() { document.getElementById('kontakt-modal').classList.add('hide'); }
+
+async function sendKontakt() {
+  const name = document.getElementById('k-name').value.trim();
+  const email = document.getElementById('k-email').value.trim();
+  const subject = document.getElementById('k-subject').value;
+  const message = document.getElementById('k-message').value.trim();
+  if(!name||!email||!subject||!message){ alert(currentLang==='de'?'Bitte alle Felder ausfüllen.':'Please fill in all fields.'); return; }
+  const btn = document.getElementById('k-submit');
+  btn.disabled=true; btn.textContent='⏳...';
+  try {
+    await fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,platform:'Contact Form',roastData:{score:0,headline:`Contact: ${subject}`,roast_items:[{emoji:'✉️',category:'Message',severity:'niedrig',text:message}],bio_versions:[]}})});
+  } catch(e){}
+  document.getElementById('kontakt-form-wrap').style.display='none';
+  document.getElementById('kontakt-success').style.display='block';
+  btn.disabled=false; btn.textContent='📨 ' + (currentLang==='de'?'Nachricht senden':'Send message');
+}
+
+// ── DSGVO ──
+function acceptDsgvo() {
+  document.getElementById('dsgvo-banner').classList.add('hide');
+  localStorage.setItem('dsgvo_ok','1');
+}
+
 </script>
 </body>
 </html>
