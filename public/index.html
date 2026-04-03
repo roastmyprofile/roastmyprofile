@@ -1077,13 +1077,7 @@ async function compressImg(dataUrl) {
 // ── CALL AI ──
 async function callAI(isFull) {
   const bio = document.getElementById('bio-inp').value.trim();
-  const bioTxt = bio ? `\n\nBio:\n"${bio}"` : '\n\n(Kein Bio-Text angegeben)';
-  const prompt = isFull
-    ? `Plattform: ${platform}${bioTxt}\n\nVollständige Analyse als JSON ohne Markdown:\n{"score":<ehrliche Zahl 1-10>,"headline":"<witziger Satz>","roast_items":[{"emoji":"","category":"","severity":"<hoch|mittel|niedrig>","text":"<2-4 Sätze>"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":""},{"label":"Direkt & interessant","text":""},{"label":"Geheimnisvoll","text":""}]}\n8-12 Items. Natürliches Deutsch.`
-    : `Plattform: ${platform}${bioTxt}\n\nMini-Roast als JSON ohne Markdown:\n{"score":<ehrliche Zahl 1-10>,"headline":"<witziger Satz max 8 Wörter>","roast_items":[{"emoji":"","category":"","severity":"<hoch|mittel|niedrig>","text":"<2-3 Sätze>"}]}\nGenau 3 Items. Natürliches Deutsch.`;
-
   const compressedImgs = await Promise.all(imgs.slice(0,2).map(compressImg));
-
   const res = await fetch('/api/roast', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1158,7 +1152,6 @@ async function submitLead() {
 // ── START ROAST ──
 async function startRoast() { openLeadModal(); }
 async function doStartRoast() {
-  const bio = document.getElementById('bio-inp').value.trim();
   document.getElementById('err-box').style.display = 'none';
   document.getElementById('start-btn').disabled = true;
   showScreen('ascreen-load');
@@ -1169,6 +1162,16 @@ async function doStartRoast() {
       document.getElementById('res-score').textContent = freeData.score || '?';
       renderCards(freeData.roast_items, 'free-items');
       showScreen('ascreen-free');
+      // Send free roast by email
+      const name = window._leadName || '';
+      const email = window._leadEmail || '';
+      if (email) {
+        fetch('/api/send-email', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ name, email, platform, roastData: freeData, isFree: true })
+        }).catch(() => {});
+      }
     } catch(e) { showErr(e.message || 'Fehler. Bitte nochmal versuchen.'); }
   });
 }
