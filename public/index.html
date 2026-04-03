@@ -668,6 +668,12 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
       <label id="t-lead-email-lbl" for="lead-email">E-Mail</label>
       <input type="email" id="lead-email" placeholder="max@beispiel.de" autocomplete="email" required>
     </div>
+    <div class="agb-check-wrap" style="margin-bottom:14px;">
+      <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--smoke);line-height:1.5;">
+        <input type="checkbox" id="lead-agb-check" style="margin-top:2px;flex-shrink:0;accent-color:var(--fire);">
+        <span id="t-lead-agb">Ich stimme den <a href="#" onclick="event.preventDefault();openLegal('agb')" style="color:var(--fire);">AGB</a> und der <a href="#" onclick="event.preventDefault();openLegal('datenschutz')" style="color:var(--fire);">Datenschutzerklärung</a> zu und bin einverstanden, mein Ergebnis per E-Mail zu erhalten.</span>
+      </label>
+    </div>
     <div id="lead-err" style="display:none;background:rgba(255,69,0,0.1);border:1px solid rgba(255,69,0,0.3);color:var(--fire);padding:10px 14px;font-size:13px;margin-bottom:12px;"></div>
     <button id="lead-submit-btn" style="width:100%;padding:15px;background:var(--fire);border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));margin-bottom:10px;transition:background 0.2s;" onclick="submitLead()">🔥 Kostenlosen Roast starten</button>
     
@@ -1053,6 +1059,7 @@ function showErr(msg) {
   b.textContent = '⚠️ ' + msg;
   b.style.display = 'block';
   document.getElementById('start-btn').disabled = false;
+  const leadAgb = document.getElementById('lead-agb-check'); if(leadAgb) leadAgb.checked = false;
   showScreen('ascreen-upload');
 }
 
@@ -1130,6 +1137,12 @@ async function submitLead() {
   const name = document.getElementById('lead-name').value.trim();
   const email = document.getElementById('lead-email').value.trim();
   const errEl = document.getElementById('lead-err');
+  const agbCheck = document.getElementById('lead-agb-check');
+  if (!agbCheck.checked) {
+    errEl.textContent = currentLang === 'en' ? 'Please accept the Terms and Privacy Policy.' : 'Bitte stimme den AGB und der Datenschutzerklärung zu.';
+    errEl.style.display = 'block';
+    return;
+  }
   if (!name) {
     errEl.textContent = currentLang === 'en' ? 'Please enter your name.' : 'Bitte gib deinen Namen ein.';
     errEl.style.display = 'block';
@@ -1182,6 +1195,7 @@ function resetApp() {
   document.getElementById('bio-inp').value = '';
   document.getElementById('prev-grid').innerHTML = '';
   document.getElementById('start-btn').disabled = false;
+  const leadAgb = document.getElementById('lead-agb-check'); if(leadAgb) leadAgb.checked = false;
   document.getElementById('err-box').style.display = 'none';
   showScreen('ascreen-upload');
 }
@@ -1515,6 +1529,7 @@ function applyLang() {
   setText('t-lead-title', t.leadTitle); setText('t-lead-sub', t.leadSub);
   setText('t-lead-p1', t.leadP1); setText('t-lead-p2', t.leadP2); setText('t-lead-p3', t.leadP3);
   setText('t-lead-name-lbl', t.leadNameLbl); setText('t-lead-email-lbl', t.leadEmailLbl);
+  setHTML('t-lead-agb', t.leadAgb);
   setText('t-lead-skip', t.leadSkip);
   // Legal modals EN/DE switch
   ['impressum','datenschutz','agb'].forEach(p => {
