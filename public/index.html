@@ -671,7 +671,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
     <div class="agb-check-wrap" style="margin-bottom:14px;">
       <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;color:var(--smoke);line-height:1.5;">
         <input type="checkbox" id="lead-agb-check" style="margin-top:2px;flex-shrink:0;accent-color:var(--fire);">
-        <span id="t-lead-agb">Ich stimme den <a href="#" onclick="event.preventDefault();openLegal('agb')" style="color:var(--fire);">AGB</a> und der <a href="#" onclick="event.preventDefault();openLegal('datenschutz')" style="color:var(--fire);">Datenschutzerklärung</a> zu und bin einverstanden, mein Ergebnis per E-Mail zu erhalten.</span>
+        <span id="t-lead-agb">Ich stimme den AGB und der Datenschutzerklärung zu und bin einverstanden, mein Ergebnis per E-Mail zu erhalten.</span>
       </label>
     </div>
     <div id="lead-err" style="display:none;background:rgba(255,69,0,0.1);border:1px solid rgba(255,69,0,0.3);color:var(--fire);padding:10px 14px;font-size:13px;margin-bottom:12px;"></div>
@@ -1379,7 +1379,7 @@ const T = {
     trust1: "DSGVO-konform", trust2: "Keine Datenspeicherung", trust3: "Stripe-Zahlung", trust4: "24h Geld-zurück", trust5: "Kein Abo",
     footerImpressum: "Impressum", footerPrivacy: "Datenschutz", footerAgb: "AGB", footerContact: "Kontakt",
     bmMistakes: "Die häufigsten Fehler", bmExample: "Beispiel ansehen", bmHow: "So funktioniert's", bmPricing: "Preise", bmFaq: "FAQ", bmCta: "🔥 Kostenlosen Roast starten",
-    leadTitle: "🔥 Fast fertig!", leadSub: "Wo sollen wir dein Ergebnis hinschicken? (Optional – aber so kannst du es immer wieder aufrufen)", leadP1: "Kostenlos · 3 Kritikpunkte + Score", leadP2: "Ergebnis per E-Mail erhalten", leadP3: "Kein Konto, keine Kreditkarte", leadNameLbl: "Dein Name", leadEmailLbl: "E-Mail",
+    leadTitle: "🔥 Fast fertig!", leadSub: "Wo sollen wir dein Ergebnis hinschicken? (Optional – aber so kannst du es immer wieder aufrufen)", leadP1: "Kostenlos · 3 Kritikpunkte + Score", leadP2: "Ergebnis per E-Mail erhalten", leadP3: "Kein Konto, keine Kreditkarte", leadNameLbl: "Dein Name", leadEmailLbl: "E-Mail", leadAgb: "Ich stimme den AGB und der Datenschutzerklärung zu und bin einverstanden, mein Ergebnis per E-Mail zu erhalten.",
     backBtn: "← Zurück zur Startseite", appBadge: "🔥 KI-Analyse",
     appEyebrow: "🔥 Ehrliches KI-Feedback", appH1Fire: "kriegt die Wahrheit.",
     appSub: "Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.",
@@ -1444,7 +1444,7 @@ const T = {
     trust1: "GDPR compliant", trust2: "No data stored", trust3: "Stripe payment", trust4: "24h money-back", trust5: "No subscription",
     footerImpressum: "Legal notice", footerPrivacy: "Privacy", footerAgb: "Terms", footerContact: "Contact",
     bmMistakes: "Common Mistakes", bmExample: "See an example", bmHow: "How it works", bmPricing: "Pricing", bmFaq: "FAQ", bmCta: "🔥 Get my free roast",
-    leadTitle: "🔥 Almost there!", leadSub: "Where should we send your results? (Optional – but this way you can always come back to it)", leadP1: "Free · 3 feedback points + score", leadP2: "Get results by email", leadP3: "No account, no credit card", leadNameLbl: "Your name", leadEmailLbl: "Email",
+    leadTitle: "🔥 Almost there!", leadSub: "Where should we send your results? (Optional – but this way you can always come back to it)", leadP1: "Free · 3 feedback points + score", leadP2: "Get results by email", leadP3: "No account, no credit card", leadNameLbl: "Your name", leadEmailLbl: "Email", leadAgb: "I agree to the Terms and Privacy Policy and consent to receiving my result by email.",
     backBtn: "← Back to home", appBadge: "🔥 AI Analysis",
     appEyebrow: "🔥 Brutally honest AI feedback", appH1Fire: "gets the truth.",
     appSub: "Upload your profile – our AI tells you exactly why you are not getting matches.",
@@ -1549,8 +1549,7 @@ function applyLang() {
   setText('t-lead-title', t.leadTitle); setText('t-lead-sub', t.leadSub);
   setText('t-lead-p1', t.leadP1); setText('t-lead-p2', t.leadP2); setText('t-lead-p3', t.leadP3);
   setText('t-lead-name-lbl', t.leadNameLbl); setText('t-lead-email-lbl', t.leadEmailLbl);
-  setHTML('t-lead-agb', t.leadAgb);
-  setText('t-lead-skip', t.leadSkip);
+  setText('t-lead-agb', t.leadAgb);
   // Legal modals EN/DE switch
   ['impressum','datenschutz','agb'].forEach(p => {
     const de = document.getElementById('lp-'+p);
