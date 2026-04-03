@@ -9,7 +9,7 @@
 :root{--fire:#FF4500;--fire2:#FF7A3D;--gold:#FFB800;--cream:#FFF8F0;--dark:#0D0905;--dark2:#160F09;--card:#1C1209;--border:rgba(255,255,255,0.07);--smoke:#7A6A5A;--green:#22C55E;--muted:rgba(255,248,240,0.55);}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--dark);color:var(--cream);font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6;}
+body{background:var(--dark);color:var(--cream);font-family:'DM Sans',sans-serif;overflow-x:hidden;line-height:1.6;max-width:100vw;}
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(255,69,0,0.13) 0%,transparent 60%);}
 .wrap{position:relative;z-index:1;}
 #page-landing{display:block;}
@@ -23,12 +23,24 @@ nav{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between
 .nav-social-proof{font-size:12px;color:var(--smoke);display:flex;align-items:center;gap:6px;}
 .nav-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.3)}}
-.nav-cta{background:var(--fire);color:var(--cream);border:none;padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:background 0.2s;}
+.nav-cta{background:var(--fire);color:var(--cream);border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));transition:background 0.2s;white-space:nowrap;}
 .nav-cta:hover{background:var(--fire2);}
-.lang-switch{display:flex;gap:2px;border:1px solid rgba(255,255,255,0.1);}
-.lang-btn{background:transparent;color:var(--smoke);border:none;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-.lang-btn.active{background:rgba(255,69,0,0.15);color:var(--cream);}
-.lang-btn:hover{color:var(--cream);}
+.lang-dropdown{position:relative;}
+.lang-sel{background:rgba(255,255,255,0.06);color:var(--cream);border:1px solid rgba(255,255,255,0.12);padding:7px 28px 7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;appearance:none;-webkit-appearance:none;outline:none;border-radius:0;}
+.lang-sel:hover{border-color:rgba(255,69,0,0.4);}
+.lang-arrow{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:9px;color:var(--smoke);}
+/* Burger menu */
+.burger-btn{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:4px;z-index:150;}
+.burger-btn span{display:block;width:20px;height:2px;background:var(--cream);transition:all 0.3s;}
+.burger-btn.open span:nth-child(1){transform:rotate(45deg) translate(4px,4px);}
+.burger-btn.open span:nth-child(2){opacity:0;}
+.burger-btn.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px);}
+.burger-menu{position:fixed;top:64px;left:0;right:0;background:rgba(13,9,5,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:99;padding:16px 5%;display:none;flex-direction:column;gap:2px;}
+.burger-menu.open{display:flex;}
+.burger-link{background:none;border:none;color:rgba(255,248,240,0.7);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;padding:12px 0;text-align:left;cursor:pointer;border-bottom:1px solid var(--border);transition:color 0.2s;width:100%;}
+.burger-link:last-child{border-bottom:none;}
+.burger-link:hover{color:var(--fire);}
+.burger-cta-link{color:var(--fire);font-weight:700;}
 
 /* BUTTONS */
 .btn-hero{background:var(--fire);color:var(--cream);border:none;padding:20px 48px;font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));transition:all 0.2s;}
@@ -266,7 +278,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 /* MODAL - KAUF */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
 .modal-bg.hide{display:none;}
-.modal{background:var(--card);border:1px solid rgba(255,69,0,0.2);max-width:440px;width:100%;padding:32px;position:relative;margin:auto;}
+.modal{background:var(--card);border:1px solid rgba(255,69,0,0.2);max-width:440px;width:100%;padding:28px;position:relative;margin:auto;box-sizing:border-box;}
 .modal-x{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--smoke);font-size:20px;cursor:pointer;}
 .modal-x:hover{color:var(--cream);}
 .modal-title{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:6px;}
@@ -279,7 +291,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 .modal-price-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);}
 .modal-field{margin-bottom:14px;}
 .modal-field label{display:block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--smoke);margin-bottom:6px;}
-.modal-field input{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;padding:12px 14px;outline:none;transition:border-color 0.2s;}
+.modal-field input{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;padding:12px 14px;outline:none;transition:border-color 0.2s;box-sizing:border-box;}
 .modal-field input:focus{border-color:rgba(255,69,0,0.4);}
 .modal-field input::placeholder{color:var(--smoke);}
 .modal-email-note{font-size:12px;color:var(--smoke);margin-bottom:16px;line-height:1.5;padding:10px 12px;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.15);}
@@ -344,6 +356,15 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 .kontakt-success h3{font-size:20px;font-weight:700;margin-bottom:8px;}
 .kontakt-success p{font-size:14px;color:var(--smoke);}
 
+/* LEAD MODAL */
+.lead-bg{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:250;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.lead-bg.hide{display:none;}
+.lead-box{background:var(--card);border:1px solid rgba(255,69,0,0.25);max-width:400px;width:100%;padding:32px;position:relative;}
+.lead-box h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:6px;}
+.lead-box p{font-size:13px;color:var(--smoke);margin-bottom:22px;line-height:1.6;}
+.lead-perks{list-style:none;margin-bottom:20px;}
+.lead-perks li{display:flex;align-items:center;gap:8px;font-size:13px;padding:5px 0;color:var(--muted);}
+.lead-perks li span:first-child{color:var(--fire);}
 /* DSGVO BANNER */
 .dsgvo-banner{position:fixed;bottom:0;left:0;right:0;background:#1C1209;border-top:1px solid rgba(255,255,255,0.08);padding:14px 5%;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:500;flex-wrap:wrap;}
 .dsgvo-banner.hide{display:none;}
@@ -372,16 +393,33 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 
 <!-- NAV -->
 <nav>
-  <div class="logo" onclick="showLanding()">Roast<em>My</em>Profile</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button class="burger-btn" id="burger-btn" onclick="toggleBurger()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo" onclick="showLanding();closeBurger();">Roast<em>My</em>Profile</div>
+  </div>
   <div class="nav-right">
     <div class="nav-social-proof"><span class="nav-dot"></span><span id="nav-stats">3.847 Profile analysiert diese Woche</span></div>
-    <div class="lang-switch">
-      <button class="lang-btn active" id="lang-de" onclick="setLang('de')">🇩🇪 DE</button>
-      <button class="lang-btn" id="lang-en" onclick="setLang('en')">🇺🇸 EN</button>
+    <div class="lang-dropdown">
+      <select class="lang-sel" id="lang-sel" onchange="setLang(this.value)">
+        <option value="de">🇩🇪 DE</option>
+        <option value="en">🇺🇸 EN</option>
+      </select>
+      <span class="lang-arrow">▼</span>
     </div>
     <button class="nav-cta" id="nav-cta-btn" onclick="showApp()">Jetzt testen 🔥</button>
   </div>
 </nav>
+<!-- BURGER MENU -->
+<div class="burger-menu" id="burger-menu">
+  <button class="burger-link" id="bm-mistakes" onclick="scrollToSection('section-mistakes');closeBurger();">Die häufigsten Fehler</button>
+  <button class="burger-link" id="bm-example" onclick="scrollToSection('section-example');closeBurger();">Beispiel ansehen</button>
+  <button class="burger-link" id="bm-how" onclick="scrollToSection('section-how');closeBurger();">So funktioniert's</button>
+  <button class="burger-link" id="bm-pricing" onclick="scrollToSection('section-pricing');closeBurger();">Preise</button>
+  <button class="burger-link" id="bm-faq" onclick="scrollToSection('section-faq');closeBurger();">FAQ</button>
+  <button class="burger-link burger-cta-link" onclick="showApp();closeBurger();" id="bm-cta">🔥 Kostenlosen Roast starten</button>
+</div>
 
 <!-- ═══ LANDING ═══ -->
 <div id="page-landing">
@@ -403,7 +441,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   </div>
 </section>
 
-<div class="sec">
+<div class="sec" id="section-mistakes">
   <div class="eyebrow" id="t-pain-eyebrow">Das Problem</div>
   <h2 class="sec-title reveal" id="t-pain-title">Du swipst. Du hoffst.<br>Nichts passiert.</h2>
   <p style="color:var(--muted);font-size:17px;max-width:520px;margin-top:12px;" class="reveal" id="t-pain-sub">Die meisten Dating-Profile scheitern an drei Fehlern. Und niemand sagt dir welche.</p>
@@ -414,7 +452,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   </div>
 </div>
 
-<div class="sec-dark"><div class="sec-in">
+<div class="sec-dark" id="section-example"><div class="sec-in">
   <div class="eyebrow reveal" id="t-ex-eyebrow">Echtes Beispiel</div>
   <h2 class="sec-title reveal" id="t-ex-title">So sieht ein Roast aus</h2>
   <div class="ex-grid reveal">
@@ -439,7 +477,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   </div>
 </div></div>
 
-<div class="sec">
+<div class="sec" id="section-how">
   <div class="eyebrow reveal" id="t-steps-eyebrow">So funktioniert's</div>
   <h2 class="sec-title reveal" id="t-steps-title">3 Schritte. 60 Sekunden.<br>Mehr Matches.</h2>
   <div class="steps-row reveal">
@@ -464,7 +502,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   </div>
 </div></div>
 
-<div class="sec" style="text-align:center;">
+<div class="sec" id="section-pricing" style="text-align:center;">
   <div class="eyebrow reveal" id="t-price-eyebrow">Preise</div>
   <h2 class="sec-title reveal" id="t-price-title">Transparent. Einmalig. Fair.</h2>
   <div class="pricing-grid">
@@ -474,7 +512,7 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   <p class="pricing-note reveal" id="t-price-note">💡 Ein echter Dating-Coach kostet <strong>80–150 € / Stunde</strong>. Du bekommst dasselbe – in 60 Sek, für 4,99 €.</p>
 </div>
 
-<div class="faq-wrap">
+<div class="faq-wrap" id="section-faq">
   <div class="eyebrow reveal" id="t-faq-eyebrow">FAQ</div>
   <h2 class="sec-title reveal" id="t-faq-title">Deine Fragen.<br>Ehrliche Antworten.</h2>
   <div style="margin-top:36px;" class="reveal">
@@ -609,6 +647,29 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 </div><!-- /app-inner -->
 </div><!-- /page-app -->
 
+<!-- ═══ LEAD MODAL (vor kostenlosem Roast) ═══ -->
+<div class="lead-bg hide" id="lead-modal">
+  <div class="lead-box">
+    <h3 id="t-lead-title">🔥 Fast fertig!</h3>
+    <p id="t-lead-sub">Wo sollen wir dein Ergebnis hinschicken? (Optional – aber so kannst du es immer wieder aufrufen)</p>
+    <ul class="lead-perks">
+      <li><span>✓</span><span id="t-lead-p1">Kostenlos · 3 Kritikpunkte + Score</span></li>
+      <li><span>✓</span><span id="t-lead-p2">Ergebnis per E-Mail erhalten</span></li>
+      <li><span>✓</span><span id="t-lead-p3">Kein Konto, keine Kreditkarte</span></li>
+    </ul>
+    <div class="modal-field">
+      <label id="t-lead-name-lbl" for="lead-name">Dein Name</label>
+      <input type="text" id="lead-name" placeholder="Max" autocomplete="given-name">
+    </div>
+    <div class="modal-field">
+      <label id="t-lead-email-lbl" for="lead-email">E-Mail (optional)</label>
+      <input type="email" id="lead-email" placeholder="max@beispiel.de" autocomplete="email">
+    </div>
+    <button id="lead-submit-btn" style="width:100%;padding:15px;background:var(--fire);border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));margin-bottom:10px;transition:background 0.2s;" onclick="submitLead()">🔥 Kostenlosen Roast starten</button>
+    <p style="text-align:center;font-size:11px;color:var(--smoke);" id="t-lead-skip"><a href="#" onclick="event.preventDefault();submitLead(true)" style="color:var(--smoke);text-decoration:underline;">Überspringen – ohne E-Mail fortfahren</a></p>
+  </div>
+</div>
+
 <!-- ═══ KAUF MODAL ═══ -->
 <div class="modal-bg hide" id="modal">
   <div class="modal">
@@ -678,52 +739,107 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
   <div class="legal-box">
     <button class="legal-x" onclick="closeLegal()">✕</button>
 
-    <div id="lp-impressum">
+    <!-- IMPRESSUM DE -->
+    <div id="lp-impressum" class="legal-lang-de">
       <h2>Impressum</h2>
       <h3>Angaben gemäß § 5 TMG</h3>
       <p>Dennis Reinhardt<br>Altenberger Str. 81<br>01277 Dresden<br>Deutschland</p>
       <h3>Kontakt</h3>
-      <p>E-Mail: <a href="/cdn-cgi/l/email-protection#93f0fcfde7f2f0e7d3e1fcf2e0e7feeae3e1fcf5fafff6bdf2e3e3"><span class="__cf_email__" data-cfemail="53303c3d2732302713213c3220273e2a23213c353a3f367d322323">[email&#160;protected]</span></a></p>
+      <p>E-Mail: <a href="mailto:contact@roastmyprofile.app">contact@roastmyprofile.app</a></p>
       <h3>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
       <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden</p>
       <h3>EU-Streitschlichtung</h3>
       <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank">ec.europa.eu/consumers/odr</a>. Wir nehmen nicht an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teil.</p>
     </div>
+    <!-- IMPRESSUM EN -->
+    <div id="lp-impressum-en" class="legal-lang-en hide">
+      <h2>Legal Notice</h2>
+      <h3>Information according to § 5 TMG (German law)</h3>
+      <p>Dennis Reinhardt<br>Altenberger Str. 81<br>01277 Dresden<br>Germany</p>
+      <h3>Contact</h3>
+      <p>Email: <a href="mailto:contact@roastmyprofile.app">contact@roastmyprofile.app</a></p>
+      <h3>Responsible for content</h3>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, Germany</p>
+      <h3>EU Dispute Resolution</h3>
+      <p>The European Commission provides a platform for online dispute resolution: <a href="https://ec.europa.eu/consumers/odr/" target="_blank">ec.europa.eu/consumers/odr</a>. We are not obligated to participate in dispute resolution proceedings.</p>
+    </div>
 
-    <div id="lp-datenschutz" class="hide">
+    <!-- DATENSCHUTZ DE -->
+    <div id="lp-datenschutz" class="legal-lang-de hide">
       <h2>Datenschutzerklärung</h2>
       <h3>1. Verantwortlicher</h3>
-      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="50333f3e2431332410223f3123243d2920223f36393c357e312020">[email&#160;protected]</a></p>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden · contact@roastmyprofile.app</p>
       <h3>2. Erhobene Daten</h3>
       <ul>
+        <li>Name und E-Mail (bei kostenlosem Roast optional, bei Kauf erforderlich)</li>
         <li>Hochgeladene Profilfotos und Bio-Texte (nur zur Analyse, danach gelöscht)</li>
-        <li>Name und E-Mail bei Kauf (für Lieferung und Zahlungsabwicklung)</li>
         <li>Anonyme Nutzungsstatistiken via Plausible Analytics (ohne Cookies)</li>
       </ul>
       <h3>3. Zweck</h3>
-      <p>Daten werden ausschließlich zur Erbringung der KI-Analyse und Zahlungsabwicklung verwendet. Keine Weitergabe zu Werbezwecken.</p>
+      <p>Daten werden zur Erbringung der KI-Analyse, Zahlungsabwicklung und auf Wunsch zum Versand des Ergebnisses per E-Mail verwendet. Mit Angabe der E-Mail-Adresse stimmst du zu, gelegentlich relevante Produktneuheiten zu erhalten. Eine Abmeldung ist jederzeit möglich.</p>
       <h3>4. Drittanbieter</h3>
-      <p><strong>Stripe:</strong> Zahlungsabwicklung (stripe.com/privacy)<br><strong>Resend:</strong> E-Mail-Versand (resend.com/legal/privacy-policy)<br><strong>Plausible:</strong> Cookie-freie Webanalyse (plausible.io/privacy)<br><strong>Vercel:</strong> Hosting (vercel.com/legal/privacy-policy)</p>
+      <p><strong>Stripe:</strong> Zahlungsabwicklung · <strong>Resend:</strong> E-Mail-Versand · <strong>Plausible:</strong> Cookie-freie Webanalyse · <strong>Vercel:</strong> Hosting</p>
       <h3>5. Deine Rechte</h3>
-      <p>Auskunft, Berichtigung, Löschung: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80e3efeef4e1e3f4c0f2efe1f3f4edf9f0f2efe6e9ece5aee1f0f0">[email&#160;protected]</a></p>
+      <p>Auskunft, Berichtigung, Löschung: contact@roastmyprofile.app</p>
+    </div>
+    <!-- DATENSCHUTZ EN -->
+    <div id="lp-datenschutz-en" class="legal-lang-en hide">
+      <h2>Privacy Policy</h2>
+      <h3>1. Controller</h3>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, Germany · contact@roastmyprofile.app</p>
+      <h3>2. Data collected</h3>
+      <ul>
+        <li>Name and email (optional for free roast, required for purchase)</li>
+        <li>Uploaded profile photos and bio text (used for analysis only, then deleted)</li>
+        <li>Anonymous usage statistics via Plausible Analytics (no cookies)</li>
+      </ul>
+      <h3>3. Purpose</h3>
+      <p>Data is used to provide the AI analysis, process payments, and optionally send results by email. By providing your email, you agree to occasionally receive relevant product updates. You can unsubscribe at any time.</p>
+      <h3>4. Third parties</h3>
+      <p><strong>Stripe:</strong> Payments · <strong>Resend:</strong> Email delivery · <strong>Plausible:</strong> Cookie-free analytics · <strong>Vercel:</strong> Hosting</p>
+      <h3>5. Your rights</h3>
+      <p>Access, correction, deletion: contact@roastmyprofile.app</p>
     </div>
 
-    <div id="lp-agb" class="hide">
+    <!-- AGB DE -->
+    <div id="lp-agb" class="legal-lang-de hide">
       <h2>Allgemeine Geschäftsbedingungen</h2>
       <h3>1. Anbieter</h3>
-      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="492a26273d282a3d093b26283a3d2430393b262f20252c67283939">[email&#160;protected]</a></p>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, contact@roastmyprofile.app</p>
       <h3>2. Leistung</h3>
       <p>RoastMyProfile bietet KI-gestützte Analyse von Dating-Profilen. Kostenlos: 3 Kritikpunkte + Score. Vollversion (4,99 €): 10+ Kritikpunkte, Foto-Analyse, 3 optimierte Bios.</p>
       <h3>3. Zahlung</h3>
       <p>4,99 € inkl. MwSt., Einmalzahlung via Stripe. Kein Abonnement.</p>
-      <h3>4. Widerrufsrecht</h3>
-      <p>Da es sich um digitale Inhalte handelt die sofort geliefert werden, erlischt das Widerrufsrecht mit Beginn der Ausführung, wenn du ausdrücklich zugestimmt hast und deine Kenntnis vom Erlöschen bestätigt hast.</p>
-      <h3>5. Freiwillige Geld-zurück-Garantie</h3>
-      <p>Bei Unzufriedenheit innerhalb von 24 Stunden erstatten wir den vollen Betrag. Kontakt: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d2b1bdbca6b3b1a692a0bdb3a1a6bfaba2a0bdb4bbbeb7fcb3a2a2">[email&#160;protected]</a></p>
-      <h3>6. Haftung</h3>
+      <h3>4. Datenverarbeitung &amp; Newsletter</h3>
+      <p>Mit Angabe deiner E-Mail-Adresse (kostenloser Roast oder Kauf) stimmst du zu, dass wir deine Daten zur Erbringung der Leistung sowie zur gelegentlichen Zusendung von Produktneuheiten verarbeiten dürfen. Eine Abmeldung ist jederzeit per E-Mail an contact@roastmyprofile.app möglich. Mit Akzeptanz der Cookies (sofern aktiviert) stimmst du zusätzlich der Verarbeitung anonymer Nutzungsdaten zu Analysezwecken zu.</p>
+      <h3>5. Widerrufsrecht</h3>
+      <p>Da es sich um digitale Inhalte handelt die sofort geliefert werden, erlischt das Widerrufsrecht mit Beginn der Ausführung, wenn du ausdrücklich zugestimmt hast.</p>
+      <h3>6. Freiwillige Geld-zurück-Garantie</h3>
+      <p>Bei Unzufriedenheit innerhalb von 24 Stunden erstatten wir den vollen Betrag. Kontakt: contact@roastmyprofile.app</p>
+      <h3>7. Haftung</h3>
       <p>Die Analyse dient zur Unterhaltung und Inspiration. Keine Garantie auf bestimmte Ergebnisse. Haftung begrenzt auf Kaufpreis.</p>
-      <h3>7. Recht</h3>
+      <h3>8. Recht</h3>
       <p>Deutsches Recht. Gerichtsstand: Dresden.</p>
+    </div>
+    <!-- AGB EN -->
+    <div id="lp-agb-en" class="legal-lang-en hide">
+      <h2>Terms and Conditions</h2>
+      <h3>1. Provider</h3>
+      <p>Dennis Reinhardt, Altenberger Str. 81, 01277 Dresden, Germany · contact@roastmyprofile.app</p>
+      <h3>2. Service</h3>
+      <p>RoastMyProfile provides AI-powered dating profile analysis. Free: 3 feedback points + score. Full version (€4.99): 10+ feedback points, photo analysis, 3 optimized bios.</p>
+      <h3>3. Payment</h3>
+      <p>€4.99 incl. VAT, one-time payment via Stripe. No subscription.</p>
+      <h3>4. Data processing &amp; Newsletter</h3>
+      <p>By providing your email address (free roast or purchase), you agree that we may process your data to deliver the service and occasionally send relevant product updates. You can unsubscribe at any time by emailing contact@roastmyprofile.app. By accepting cookies (if enabled), you additionally consent to the processing of anonymous usage data for analytics purposes.</p>
+      <h3>5. Right of withdrawal</h3>
+      <p>As this is digital content delivered immediately, the right of withdrawal expires upon commencement of execution once you have explicitly agreed.</p>
+      <h3>6. Voluntary money-back guarantee</h3>
+      <p>If unsatisfied within 24 hours, we will refund the full amount. Contact: contact@roastmyprofile.app</p>
+      <h3>7. Liability</h3>
+      <p>The analysis is for entertainment and inspiration purposes. No guarantee of specific results. Liability limited to the purchase price.</p>
+      <h3>8. Governing law</h3>
+      <p>German law applies. Place of jurisdiction: Dresden, Germany.</p>
     </div>
 
   </div>
@@ -782,7 +898,26 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
 // Alle Initialisierungen nach DOM-Laden
 document.addEventListener('DOMContentLoaded', function() {
 
-  // ── DSGVO ──
+  // ── BURGER MENU ──
+function toggleBurger() {
+  const btn = document.getElementById('burger-btn');
+  const menu = document.getElementById('burger-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+function closeBurger() {
+  document.getElementById('burger-btn').classList.remove('open');
+  document.getElementById('burger-menu').classList.remove('open');
+}
+function scrollToSection(id) {
+  showLanding();
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
+}
+
+// ── DSGVO ──
   if (!localStorage.getItem('dsgvo_ok')) {
     document.getElementById('dsgvo-banner').classList.remove('hide');
   }
@@ -800,6 +935,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ── MODAL BACKDROP CLICKS ──
   document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
+  document.getElementById('lead-modal').addEventListener('click', e => { if(e.target===document.getElementById('lead-modal')) submitLead(true); });
+  document.addEventListener('click', e => {
+    const burger = document.getElementById('burger-menu');
+    const btn = document.getElementById('burger-btn');
+    if(burger && burger.classList.contains('open') && !burger.contains(e.target) && !btn.contains(e.target)) closeBurger();
+  });
   document.getElementById('ex-modal').addEventListener('click', e => { if(e.target===document.getElementById('ex-modal')) closeExample(); });
   document.getElementById('legal-modal').addEventListener('click', e => { if(e.target===document.getElementById('legal-modal')) closeLegal(); });
   document.getElementById('kontakt-modal').addEventListener('click', e => { if(e.target===document.getElementById('kontakt-modal')) closeKontakt(); });
@@ -946,7 +1087,8 @@ async function callAI(isFull) {
       platform, bio,
       images: compressedImgs.map(img => img.replace(/^data:image\/[^;]+;base64,/,'')),
       imageMimeTypes: compressedImgs.map(() => 'image/jpeg'),
-      isFull
+      isFull,
+      lang: currentLang
     })
   });
   if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error || `Fehler ${res.status}`); }
@@ -977,10 +1119,28 @@ function renderFullResult(data, name) {
   });
 }
 
-// ── START ROAST ──
-async function startRoast() {
+// ── LEAD MODAL ──
+function openLeadModal() {
   const bio = document.getElementById('bio-inp').value.trim();
-  if (!bio && imgs.length === 0) { showErr('Bitte füge mindestens deinen Bio-Text oder ein Foto hinzu.'); return; }
+  if (!bio && imgs.length === 0) {
+    const msg = currentLang === 'en' ? 'Please add at least your bio text or a photo.' : 'Bitte füge mindestens deinen Bio-Text oder ein Foto hinzu.';
+    showErr(msg); return;
+  }
+  document.getElementById('lead-modal').classList.remove('hide');
+}
+async function submitLead(skip=false) {
+  const name = skip ? '' : (document.getElementById('lead-name').value.trim());
+  const email = skip ? '' : (document.getElementById('lead-email').value.trim());
+  window._leadName = name;
+  window._leadEmail = email;
+  document.getElementById('lead-modal').classList.add('hide');
+  doStartRoast();
+}
+
+// ── START ROAST ──
+async function startRoast() { openLeadModal(); }
+async function doStartRoast() {
+  const bio = document.getElementById('bio-inp').value.trim();
   document.getElementById('err-box').style.display = 'none';
   document.getElementById('start-btn').disabled = true;
   showScreen('ascreen-load');
@@ -1070,7 +1230,11 @@ function closeExample() { document.getElementById('ex-modal').classList.add('hid
 // ── LEGAL ──
 function openLegal(page) {
   ['impressum','datenschutz','agb'].forEach(p => {
-    document.getElementById('lp-'+p).classList.toggle('hide', p!==page);
+    const isActive = p === page;
+    const de = document.getElementById('lp-'+p);
+    const en = document.getElementById('lp-'+p+'-en');
+    if(de) de.classList.toggle('hide', !isActive || currentLang === 'en');
+    if(en) en.classList.toggle('hide', !isActive || currentLang === 'de');
   });
   document.getElementById('legal-modal').classList.remove('hide');
 }
@@ -1097,6 +1261,25 @@ async function sendKontakt() {
   document.getElementById('kontakt-form-wrap').style.display='none';
   document.getElementById('kontakt-success').style.display='block';
   btn.disabled=false; btn.textContent='📨 ' + (currentLang==='de'?'Nachricht senden':'Send message');
+}
+
+// ── BURGER MENU ──
+function toggleBurger() {
+  const btn = document.getElementById('burger-btn');
+  const menu = document.getElementById('burger-menu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+function closeBurger() {
+  document.getElementById('burger-btn').classList.remove('open');
+  document.getElementById('burger-menu').classList.remove('open');
+}
+function scrollToSection(id) {
+  showLanding();
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
 }
 
 // ── DSGVO ──
@@ -1140,6 +1323,8 @@ const T = {
     finalH2: "Noch ein Tag ohne", finalFire: "Matches verschwenden?", finalP: "4,99 € für einen vollständigen Roast. Oder weiter hoffen.", finalBtn: "🔥 Kostenlosen Roast starten",
     trust1: "DSGVO-konform", trust2: "Keine Datenspeicherung", trust3: "Stripe-Zahlung", trust4: "24h Geld-zurück", trust5: "Kein Abo",
     footerImpressum: "Impressum", footerPrivacy: "Datenschutz", footerAgb: "AGB", footerContact: "Kontakt",
+    bmMistakes: "Die häufigsten Fehler", bmExample: "Beispiel ansehen", bmHow: "So funktioniert's", bmPricing: "Preise", bmFaq: "FAQ", bmCta: "🔥 Kostenlosen Roast starten",
+    leadTitle: "🔥 Fast fertig!", leadSub: "Wo sollen wir dein Ergebnis hinschicken? (Optional – aber so kannst du es immer wieder aufrufen)", leadP1: "Kostenlos · 3 Kritikpunkte + Score", leadP2: "Ergebnis per E-Mail erhalten", leadP3: "Kein Konto, keine Kreditkarte", leadNameLbl: "Dein Name", leadEmailLbl: "E-Mail (optional)", leadSkip: "Überspringen – ohne E-Mail fortfahren",
     backBtn: "← Zurück zur Startseite", appBadge: "🔥 KI-Analyse",
     appEyebrow: "🔥 Ehrliches KI-Feedback", appH1Fire: "kriegt die Wahrheit.",
     appSub: "Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.",
@@ -1203,6 +1388,8 @@ const T = {
     finalH2: "Wasting another day with", finalFire: "zero matches?", finalP: "4.99 EUR for a full roast. Or keep hoping.", finalBtn: "🔥 Get my free roast",
     trust1: "GDPR compliant", trust2: "No data stored", trust3: "Stripe payment", trust4: "24h money-back", trust5: "No subscription",
     footerImpressum: "Legal notice", footerPrivacy: "Privacy", footerAgb: "Terms", footerContact: "Contact",
+    bmMistakes: "Common Mistakes", bmExample: "See an example", bmHow: "How it works", bmPricing: "Pricing", bmFaq: "FAQ", bmCta: "🔥 Get my free roast",
+    leadTitle: "🔥 Almost there!", leadSub: "Where should we send your results? (Optional – but this way you can always come back to it)", leadP1: "Free · 3 feedback points + score", leadP2: "Get results by email", leadP3: "No account, no credit card", leadNameLbl: "Your name", leadEmailLbl: "Email (optional)", leadSkip: "Skip – continue without email",
     backBtn: "← Back to home", appBadge: "🔥 AI Analysis",
     appEyebrow: "🔥 Brutally honest AI feedback", appH1Fire: "gets the truth.",
     appSub: "Upload your profile – our AI tells you exactly why you are not getting matches.",
@@ -1245,8 +1432,7 @@ function setLang(lang) {
 function applyLang() {
   const t = T[currentLang];
   const $ = id => document.getElementById(id);
-  document.getElementById('lang-de').classList.toggle('active', currentLang==='de');
-  document.getElementById('lang-en').classList.toggle('active', currentLang==='en');
+  const sel = document.getElementById('lang-sel'); if(sel) sel.value = currentLang;
   document.documentElement.lang = currentLang;
   const setText = (id, val) => { const el=$(id); if(el) el.textContent=val; };
   const setHTML = (id, val) => { const el=$(id); if(el) el.innerHTML=val; };
@@ -1301,6 +1487,21 @@ function applyLang() {
   setText('t-trust4', t.trust4); setText('t-trust5', t.trust5);
   // Footer
   setText('t-footer-impressum', t.footerImpressum); setText('t-footer-privacy', t.footerPrivacy);
+  // Burger menu
+  setText('bm-mistakes', t.bmMistakes); setText('bm-example', t.bmExample); setText('bm-how', t.bmHow);
+  setText('bm-pricing', t.bmPricing); setText('bm-faq', t.bmFaq); setText('bm-cta', t.bmCta);
+  // Lead modal
+  setText('t-lead-title', t.leadTitle); setText('t-lead-sub', t.leadSub);
+  setText('t-lead-p1', t.leadP1); setText('t-lead-p2', t.leadP2); setText('t-lead-p3', t.leadP3);
+  setText('t-lead-name-lbl', t.leadNameLbl); setText('t-lead-email-lbl', t.leadEmailLbl);
+  setText('t-lead-skip', t.leadSkip);
+  // Legal modals EN/DE switch
+  ['impressum','datenschutz','agb'].forEach(p => {
+    const de = document.getElementById('lp-'+p);
+    const en = document.getElementById('lp-'+p+'-en');
+    if(currentLang === 'en') { if(de) de.classList.add('hide'); if(en) en.classList.remove('hide'); }
+    else { if(de) de.classList.remove('hide'); if(en) en.classList.add('hide'); }
+  });
   setText('t-footer-agb', t.footerAgb); setText('t-footer-contact', t.footerContact);
   // App
   setText('t-back-btn', t.backBtn); setText('t-app-badge', t.appBadge);
