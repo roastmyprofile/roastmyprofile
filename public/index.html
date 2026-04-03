@@ -665,11 +665,12 @@ textarea:focus{border-color:rgba(255,69,0,0.4);}
       <input type="text" id="lead-name" placeholder="Max" autocomplete="given-name">
     </div>
     <div class="modal-field">
-      <label id="t-lead-email-lbl" for="lead-email">E-Mail (optional)</label>
-      <input type="email" id="lead-email" placeholder="max@beispiel.de" autocomplete="email">
+      <label id="t-lead-email-lbl" for="lead-email">E-Mail</label>
+      <input type="email" id="lead-email" placeholder="max@beispiel.de" autocomplete="email" required>
     </div>
+    <div id="lead-err" style="display:none;background:rgba(255,69,0,0.1);border:1px solid rgba(255,69,0,0.3);color:var(--fire);padding:10px 14px;font-size:13px;margin-bottom:12px;"></div>
     <button id="lead-submit-btn" style="width:100%;padding:15px;background:var(--fire);border:none;color:var(--cream);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));margin-bottom:10px;transition:background 0.2s;" onclick="submitLead()">🔥 Kostenlosen Roast starten</button>
-    <p style="text-align:center;font-size:11px;color:var(--smoke);" id="t-lead-skip"><a href="#" onclick="event.preventDefault();submitLead(true)" style="color:var(--smoke);text-decoration:underline;">Überspringen – ohne E-Mail fortfahren</a></p>
+    
   </div>
 </div>
 
@@ -938,7 +939,7 @@ function scrollToSection(id) {
 
   // ── MODAL BACKDROP CLICKS ──
   document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) closeModal(); });
-  document.getElementById('lead-modal').addEventListener('click', e => { if(e.target===document.getElementById('lead-modal')) submitLead(true); });
+  document.getElementById('lead-modal').addEventListener('click', e => { /* no close on backdrop - required fields */ });
   document.addEventListener('click', e => {
     const burger = document.getElementById('burger-menu');
     const btn = document.getElementById('burger-btn');
@@ -1131,9 +1132,23 @@ function openLeadModal() {
   }
   document.getElementById('lead-modal').classList.remove('hide');
 }
-async function submitLead(skip=false) {
-  const name = skip ? '' : (document.getElementById('lead-name').value.trim());
-  const email = skip ? '' : (document.getElementById('lead-email').value.trim());
+async function submitLead() {
+  const name = document.getElementById('lead-name').value.trim();
+  const email = document.getElementById('lead-email').value.trim();
+  const errEl = document.getElementById('lead-err');
+  if (!name) {
+    errEl.textContent = currentLang === 'en' ? 'Please enter your name.' : 'Bitte gib deinen Namen ein.';
+    errEl.style.display = 'block';
+    document.getElementById('lead-name').focus();
+    return;
+  }
+  if (!email || !email.includes('@')) {
+    errEl.textContent = currentLang === 'en' ? 'Please enter a valid email address.' : 'Bitte gib eine gültige E-Mail-Adresse ein.';
+    errEl.style.display = 'block';
+    document.getElementById('lead-email').focus();
+    return;
+  }
+  errEl.style.display = 'none';
   window._leadName = name;
   window._leadEmail = email;
   document.getElementById('lead-modal').classList.add('hide');
@@ -1327,7 +1342,7 @@ const T = {
     trust1: "DSGVO-konform", trust2: "Keine Datenspeicherung", trust3: "Stripe-Zahlung", trust4: "24h Geld-zurück", trust5: "Kein Abo",
     footerImpressum: "Impressum", footerPrivacy: "Datenschutz", footerAgb: "AGB", footerContact: "Kontakt",
     bmMistakes: "Die häufigsten Fehler", bmExample: "Beispiel ansehen", bmHow: "So funktioniert's", bmPricing: "Preise", bmFaq: "FAQ", bmCta: "🔥 Kostenlosen Roast starten",
-    leadTitle: "🔥 Fast fertig!", leadSub: "Wo sollen wir dein Ergebnis hinschicken? (Optional – aber so kannst du es immer wieder aufrufen)", leadP1: "Kostenlos · 3 Kritikpunkte + Score", leadP2: "Ergebnis per E-Mail erhalten", leadP3: "Kein Konto, keine Kreditkarte", leadNameLbl: "Dein Name", leadEmailLbl: "E-Mail (optional)", leadSkip: "Überspringen – ohne E-Mail fortfahren",
+    leadTitle: "🔥 Fast fertig!", leadSub: "Wo sollen wir dein Ergebnis hinschicken? (Optional – aber so kannst du es immer wieder aufrufen)", leadP1: "Kostenlos · 3 Kritikpunkte + Score", leadP2: "Ergebnis per E-Mail erhalten", leadP3: "Kein Konto, keine Kreditkarte", leadNameLbl: "Dein Name", leadEmailLbl: "E-Mail",
     backBtn: "← Zurück zur Startseite", appBadge: "🔥 KI-Analyse",
     appEyebrow: "🔥 Ehrliches KI-Feedback", appH1Fire: "kriegt die Wahrheit.",
     appSub: "Lade dein Profil hoch – unsere KI sagt dir genau warum du keine Matches bekommst.",
@@ -1392,7 +1407,7 @@ const T = {
     trust1: "GDPR compliant", trust2: "No data stored", trust3: "Stripe payment", trust4: "24h money-back", trust5: "No subscription",
     footerImpressum: "Legal notice", footerPrivacy: "Privacy", footerAgb: "Terms", footerContact: "Contact",
     bmMistakes: "Common Mistakes", bmExample: "See an example", bmHow: "How it works", bmPricing: "Pricing", bmFaq: "FAQ", bmCta: "🔥 Get my free roast",
-    leadTitle: "🔥 Almost there!", leadSub: "Where should we send your results? (Optional – but this way you can always come back to it)", leadP1: "Free · 3 feedback points + score", leadP2: "Get results by email", leadP3: "No account, no credit card", leadNameLbl: "Your name", leadEmailLbl: "Email (optional)", leadSkip: "Skip – continue without email",
+    leadTitle: "🔥 Almost there!", leadSub: "Where should we send your results? (Optional – but this way you can always come back to it)", leadP1: "Free · 3 feedback points + score", leadP2: "Get results by email", leadP3: "No account, no credit card", leadNameLbl: "Your name", leadEmailLbl: "Email",
     backBtn: "← Back to home", appBadge: "🔥 AI Analysis",
     appEyebrow: "🔥 Brutally honest AI feedback", appH1Fire: "gets the truth.",
     appSub: "Upload your profile – our AI tells you exactly why you are not getting matches.",
