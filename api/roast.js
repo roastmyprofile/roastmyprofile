@@ -1,6 +1,4 @@
 // api/roast.js
-// Vercel Serverless Function – Moonshot API
-
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -8,94 +6,72 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { platform, bio, images, isFull } = req.body;
+  const { platform, bio, images, imageMimeTypes, isFull, lang } = req.body;
+  const isEN = lang === 'en';
 
   if (!bio && (!images || images.length === 0)) {
-    return res.status(400).json({ error: 'Kein Bio-Text oder Foto angegeben.' });
+    return res.status(400).json({ error: isEN ? 'No bio text or photo provided.' : 'Kein Bio-Text oder Foto angegeben.' });
   }
 
   const imageHint = (images && images.length > 0)
-    ? `\n\n(Der User hat ${images.length} Profilfoto(s) hochgeladen.)`
+    ? (isEN ? `\n\n(The user uploaded ${images.length} profile photo(s).)` : `\n\n(Der User hat ${images.length} Profilfoto(s) hochgeladen.)`)
     : '';
+  const bioText = bio ? `\n\nBio:\n"${bio}"` : (isEN ? '\n\n(No bio text provided)' : '\n\n(Kein Bio-Text angegeben)');
 
-  const bioText = bio ? `\n\nBio:\n"${bio}"` : '\n\n(Kein Bio-Text angegeben)';
+  const systemPrompt = isEN
+    ? `You are a brutally honest friend reviewing the user's ${platform||'Tinder'} profile. Tone: casual, direct, funny but never cruel. CRITICAL RULE: Respond ONLY in English. NEVER use Chinese, German, or any other language. Not even a single character. Respond ONLY with valid JSON, no markdown, no backticks.`
+    : `Du bist ein ehrlicher Freund der dem User sein ${platform||'Tinder'}-Profil kommentiert. Ton: locker, direkt, witzig. KRITISCHE REGEL: Antworte AUSSCHLIESSLICH auf Deutsch. NIEMALS Chinesisch oder andere Sprachen verwenden. Kein einziges fremdsprachiges Zeichen. Antworte NUR mit validem JSON, kein Markdown, keine Backticks.`;
 
-  const systemPrompt = `Du bist ein guter Freund der sich mit Dating auskennt und dem User gerade sein ${platform || 'Tinder'}-Profil kommentiert. Dein Ton: locker, direkt, witzig aber nie gemein. Du redest wie ein echter Mensch auf Deutsch – kein Übersetzer-Deutsch, kein KI-Sprech. Keine englischen Begriffe übersetzen (also NICHT "rote Flagge" oder "rotes Flag" – sag einfach "das ist ein Problem"). Kein "Grüße" oder förmliches Zeugs. Einfach ehrliches Feedback wie unter Kumpels. Antworte NUR mit validem JSON ohne Markdown oder Backticks.`;
+  const jsonFull = isEN
+    ? `{"score":<1.0-10.0>,"headline":"max 8 words funny","roast_items":[{"emoji":"📸","category":"First Photo","severity":"high","text":"2-4 sentences"}],"bio_versions":[{"label":"Funny & confident","text":"new bio"},{"label":"Direct & interesting","text":"new bio"},{"label":"Mysterious","text":"new bio"}]}`
+    : `{"score":<1.0-10.0>,"headline":"max 8 Wörter witzig","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-4 Sätze"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":"neue Bio"},{"label":"Direkt & interessant","text":"neue Bio"},{"label":"Geheimnisvoll","text":"neue Bio"}]}`;
 
-  const prompt = isFull
-    ? `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}
+  const jsonMini = isEN
+    ? `{"score":<1.0-10.0>,"headline":"max 8 words funny","roast_items":[{"emoji":"📸","category":"First Photo","severity":"high","text":"2-3 sentences"}]}`
+    : `{"score":<1.0-10.0>,"headline":"max 8 Wörter witzig","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-3 Sätze"}]}`;
 
-Analysiere dieses Dating-Profil komplett. Schreib wie ein Freund der kein Blatt vor den Mund nimmt – locker, konkret, auf Deutsch wie man wirklich spricht.
+  const scoreTip = isEN
+    ? 'Score honestly: most profiles 3-7, weak 2-4, strong 7-8, exceptional 8-9. Give 8-12 items.'
+    : 'Score ehrlich: die meisten Profile 3-7, schwach 2-4, stark 7-8, ausnahmsweise 8-9. Gib 8-12 Items.';
 
-WICHTIG für den Score: Sei ehrlich und realistisch. Die meisten Profile liegen zwischen 3 und 7. Nur wirklich starke Profile bekommen über 8. Schwache Profile bekommen 2-4. Vergib den Score der wirklich passt – nicht immer Mitte.
+  const scoreTipMini = isEN
+    ? 'Score honestly: most profiles 3-7. Exactly 3 items.'
+    : 'Score ehrlich: die meisten Profile 3-7. Genau 3 Items.';
 
-Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
-{"score":<ehrliche Zahl zwischen 1.0 und 10.0>,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-4 Sätze konkretes Feedback wie ein Freund es sagen würde"}],"bio_versions":[{"label":"Witzig & selbstbewusst","text":"komplett neue Bio"},{"label":"Direkt & interessant","text":"komplett neue Bio"},{"label":"Geheimnisvoll","text":"komplett neue Bio"}]}
-
-Gib 8-12 roast_items zurück. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch.`
-    : `Plattform: ${platform || 'Tinder'}${bioText}${imageHint}
-
-Gib einen kurzen ehrlichen Kommentar zu diesem Dating-Profil. Schreib wie ein Freund – locker, direkt, auf Deutsch wie man wirklich redet.
-
-WICHTIG für den Score: Sei ehrlich. Die meisten Profile liegen zwischen 3 und 7. Vergib den Score der wirklich passt – nicht immer Mitte. Schlechte Profile bekommen 2-4, gute 7-8, sehr gute 8-9.
-
-Antworte NUR mit diesem JSON (keine Erklärungen drumrum):
-{"score":<ehrliche Zahl zwischen 1.0 und 10.0>,"headline":"Kurzer witziger Satz max 8 Wörter","roast_items":[{"emoji":"📸","category":"Erstes Foto","severity":"hoch","text":"2-3 Sätze ehrliches Feedback wie ein Freund es sagen würde"}]}
-
-Genau 3 roast_items. Alles auf natürlichem Deutsch – kein Übersetzerdeutsch, kein KI-Sprech.`;
+  const prompt = `Platform: ${platform||'Tinder'}${bioText}${imageHint}\n\n${isFull ? scoreTip : scoreTipMini}\n\nRespond ONLY with this JSON:\n${isFull ? jsonFull : jsonMini}\n\n${isEN ? 'EVERY word must be in English. No other language allowed.' : 'JEDES Wort muss auf Deutsch sein. Keine andere Sprache erlaubt.'}`;
 
   try {
-    // Versuche kimi-k2.5, Fallback auf moonshot-v1-8k
     let response, lastErr;
     for (const model of ['kimi-k2.5', 'moonshot-v1-8k', 'moonshot-v1-32k']) {
-      response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.MOONSHOT_API_KEY}`
-        },
-        body: JSON.stringify({
-          model,
-          max_tokens: isFull ? 3000 : 1000,
-          temperature: 1,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: prompt }
-          ]
-        })
-      });
-      if (response.ok) { console.log('Model used:', model); break; }
-      lastErr = await response.json().catch(() => ({}));
-      console.error(`Model ${model} failed (${response.status}):`, JSON.stringify(lastErr));
+      try {
+        const userContent = (images && images.length > 0 && imageMimeTypes)
+          ? [{ type: 'text', text: prompt }, ...images.slice(0,2).map((img,i) => ({ type: 'image_url', image_url: { url: `data:${imageMimeTypes[i]||'image/jpeg'};base64,${img}` } }))]
+          : prompt;
+
+        response = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.MOONSHOT_API_KEY}` },
+          body: JSON.stringify({ model, max_tokens: isFull ? 3000 : 1000, temperature: 1,
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userContent }] })
+        });
+        if (response.ok) break;
+        lastErr = await response.text();
+      } catch(e) { lastErr = e.message; }
     }
 
-    if (!response.ok) {
-      return res.status(500).json({ error: 'KI-Analyse fehlgeschlagen. Bitte erneut versuchen.' });
-    }
+    if (!response || !response.ok) return res.status(502).json({ error: isEN ? 'AI service unavailable.' : 'KI-Service nicht erreichbar.' });
 
     const data = await response.json();
-    const rawText = data.choices?.[0]?.message?.content || '';
-    console.log('Raw response:', rawText.substring(0, 150));
+    let text = (data.choices?.[0]?.message?.content || '').replace(/```json/g,'').replace(/```/g,'').trim();
 
-    let clean = rawText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-    const jsonStart = clean.indexOf('{');
-    const jsonEnd = clean.lastIndexOf('}');
-    if (jsonStart !== -1 && jsonEnd !== -1) {
-      clean = clean.substring(jsonStart, jsonEnd + 1);
+    // Reject Chinese characters
+    if (/[\u4e00-\u9fff\u3400-\u4dbf\u{20000}-\u{2a6df}]/u.test(text)) {
+      return res.status(502).json({ error: isEN ? 'Invalid response, please try again.' : 'Ungültige Antwort, bitte nochmal versuchen.' });
     }
 
-    let parsed;
-    try {
-      parsed = JSON.parse(clean);
-    } catch (e) {
-      console.error('JSON parse failed:', clean.substring(0, 300));
-      return res.status(500).json({ error: 'KI-Antwort ungueltig. Bitte nochmal versuchen.' });
-    }
-
-    return res.status(200).json(parsed);
-
+    return res.status(200).json(JSON.parse(text));
   } catch (err) {
-    console.error('Roast handler error:', err.message);
-    return res.status(500).json({ error: 'Serverfehler. Bitte erneut versuchen.' });
+    console.error('Roast error:', err);
+    return res.status(500).json({ error: isEN ? 'Something went wrong.' : 'Fehler. Bitte nochmal versuchen.' });
   }
-};
+}
