@@ -1068,15 +1068,18 @@ async function compressImg(dataUrl) {
   return new Promise(resolve => {
     const img = new Image();
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const max = 800;
-      let w = img.width, h = img.height;
-      if(w>max){h=h*max/w;w=max;}
-      if(h>max){w=w*max/h;h=max;}
-      canvas.width=w; canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      resolve(canvas.toDataURL('image/jpeg',0.7));
+      try {
+        const canvas = document.createElement('canvas');
+        const max = 600;
+        let w = img.width, h = img.height;
+        if(w>max){h=Math.round(h*max/w);w=max;}
+        if(h>max){w=Math.round(w*max/h);h=max;}
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.6));
+      } catch(e) { resolve(null); }
     };
+    img.onerror = () => resolve(null);
     img.src = dataUrl;
   });
 }
@@ -1084,20 +1087,37 @@ async function compressImg(dataUrl) {
 // ── CALL AI ──
 async function callAI(isFull) {
   const bio = document.getElementById('bio-inp').value.trim();
-  const compressedImgs = await Promise.all(imgs.slice(0,2).map(compressImg));
-  const res = await fetch('/api/roast', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      platform, bio,
-      images: compressedImgs.map(img => img.replace(/^data:image\/[^;]+;base64,/,'')),
-      imageMimeTypes: compressedImgs.map(() => 'image/jpeg'),
-      isFull,
-      lang: currentLang
-    })
-  });
-  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error || `Fehler ${res.status}`); }
-  return res.json();
+  // Compress images, filter out failed ones
+  const compressedRaw = await Promise.all(imgs.slice(0,2).map(compressImg));
+  const compressedImgs = compressedRaw.filter(Boolean);
+  const body = {
+    platform, bio, isFull, lang: currentLang,
+    images: compressedImgs.map(img => img.replace(/^data:image\/[^;]+;base64,/, '')),
+    imageMimeTypes: compressedImgs.map(() => 'image/jpeg')
+  };
+  let res;
+  try {
+    res = await fetch('/api/roast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch(networkErr) {
+    throw new Error(currentLang === 'en' ? 'Network error. Please check your connection.' : 'Netzwerkfehler. Bitte Verbindung prüfen.');
+  }
+  if (!res.ok) {
+    let errMsg = currentLang === 'en' ? 'Something went wrong.' : 'Fehler. Bitte nochmal versuchen.';
+    try { const e = await res.json(); if(e.error) errMsg = e.error; } catch(e) {}
+    throw new Error(errMsg);
+  }
+  let data;
+  try { data = await res.json(); } catch(e) {
+    throw new Error(currentLang === 'en' ? 'Invalid response. Please try again.' : 'Ungültige Antwort. Bitte nochmal versuchen.');
+  }
+  if (!data.score || !data.roast_items) {
+    throw new Error(currentLang === 'en' ? 'Incomplete response. Please try again.' : 'Unvollständige Antwort. Bitte nochmal versuchen.');
+  }
+  return data;
 }
 
 // ── RENDER ──
